@@ -17,7 +17,12 @@ export function clampZoom(z: number) {
 }
 
 function pickMimeType() {
+  // H.264 first: it is hardware-accelerated on most machines, so high-res, high-fps
+  // frames get encoded at full quality instead of being softened by a CPU-bound
+  // software encoder (which is what happens with VP9 at native 4K / 60 fps).
   const candidates = [
+    "video/webm;codecs=h264,opus",
+    "video/webm;codecs=av1,opus",
     "video/webm;codecs=vp9,opus",
     "video/webm;codecs=vp8,opus",
     "video/webm",
@@ -26,6 +31,31 @@ function pickMimeType() {
   if (typeof MediaRecorder === "undefined") return "";
   return candidates.find((t) => MediaRecorder.isTypeSupported(t)) ?? "";
 }
+
+function codecLabel(mimeType: string) {
+  const m = /codecs=([a-z0-9]+)/i.exec(mimeType);
+  return (m?.[1] ?? "auto").toUpperCase();
+}
+
+const SHARPEN_ID = "reel-sharpen-filter";
+
+/** A light unsharp-mask filter that brings edges back after an upscale. */
+function ensureSharpenFilter(): string | null {
+  if (typeof document === "undefined") return null;
+  if (!document.getElementById(SHARPEN_ID)) {
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("width", "0");
+    svg.setAttribute("height", "0");
+    svg.setAttribute("aria-hidden", "true");
+    svg.style.position = "absolute";
+    svg.innerHTML = `<filter id="${SHARPEN_ID}" color-interpolation-filters="sRGB"><feConvolveMatrix order="3" kernelMatrix="0 -0.3 0 -0.3 2.2 -0.3 0 -0.3 0" divisor="1" preserveAlpha="true" /></filter>`;
+    document.body.appendChild(svg);
+  }
+  return `url(#${SHARPEN_ID})`;
+}
+
+export type CaptureInfo = { width: number; height: number; fps: number; codec: string };
 
 type View = { scale: number; cx: number; cy: number };
 
@@ -37,6 +67,7 @@ export function useRecorder(settings: RecorderSettings) {
   const [recordings, setRecordings] = useState<Recording[]>([]);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [zoom, setZoomState] = useState(1);
+  const [captureInfo, setCaptureInfo] = useState<CaptureInfo | null>(null);
 
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<BlobPart[]>([]);
@@ -65,6 +96,7 @@ export function useRecorder(settings: RecorderSettings) {
     audioCtxRef.current?.close().catch(() => {});
     audioCtxRef.current = null;
     setStream(null);
+    setCaptureInfo(null);
     setLevel(0);
     targetRef.current = { scale: 1, cx: 0.5, cy: 0.5 };
     currentRef.current = { scale: 1, cx: 0.5, cy: 0.5 };
@@ -117,9 +149,11 @@ export function useRecorder(settings: RecorderSettings) {
       // Zooming crops into those pixels, so capturing small is what made zoom blurry.
       const target = native;
 
+      // `ideal` only — a hard `max` would force a downscale when the user picks a
+      // second monitor that is larger than the one this window sits on.
       const videoConstraints = {
-        width: { ideal: target.width, max: target.width },
-        height: { ideal: target.height, max: target.height },
+        width: { ideal: target.width },
+        height: { ideal: target.height },
         frameRate: { ideal: settings.fps, max: settings.fps },
         displaySurface: settings.mode === "window" ? "window" : "monitor",
         cursor: settings.cursor ? "always" : "never",
@@ -174,7 +208,16 @@ export function useRecorder(settings: RecorderSettings) {
       currentRef.current = { scale: 1, cx: 0.5, cy: 0.5 };
       setZoomState(1);
 
-      let smoothing = true;
+      // Zoomed frames are upscaled with the best (bicubic-style) resampler, then a
+      // light sharpen pass restores glyph edges. If the sharpen pass is too slow
+      // for this machine at this resolution/fps it switches itself off so the
+      // frame rate never suffers.
+      const sharpenFilter = "filter" in ctx2d ? ensureSharpenFilter() : null;
+      let sharpenAllowed = sharpenFilter !== null;
+      let sharpenOn = false;
+      const frameBudget = 1000 / settings.fps;
+      let slowFrames = 0;
+
       const draw = () => {
         const W = canvas.width;
         const H = canvas.height;
@@ -185,13 +228,12 @@ export function useRecorder(settings: RecorderSettings) {
         c.scale += (t.scale - c.scale) * e;
         c.cx += (t.cx - c.cx) * e;
         c.cy += (t.cy - c.cy) * e;
+        if (Math.abs(t.scale - c.scale) < 0.002) c.scale = t.scale;
 
-        // Past ~1.6x every source pixel is stretched; bilinear turns text to mush,
-        // so switch to a hard upscale that keeps glyph edges crisp.
-        const wantSmoothing = c.scale < 1.6;
-        if (wantSmoothing !== smoothing) {
-          smoothing = wantSmoothing;
-          ctx2d.imageSmoothingEnabled = wantSmoothing;
+        const wantSharpen = sharpenAllowed && c.scale > 1.2;
+        if (wantSharpen !== sharpenOn) {
+          sharpenOn = wantSharpen;
+          ctx2d.filter = wantSharpen && sharpenFilter ? sharpenFilter : "none";
         }
 
         // Snap the crop to whole source pixels — sub-pixel crops blur the whole frame.
@@ -200,7 +242,17 @@ export function useRecorder(settings: RecorderSettings) {
         const sx = Math.round(Math.min(Math.max(c.cx * W - sw / 2, 0), W - sw));
         const sy = Math.round(Math.min(Math.max(c.cy * H - sh / 2, 0), H - sh));
         if (sourceVideo.readyState >= 2) {
+          const t0 = performance.now();
           ctx2d.drawImage(sourceVideo, sx, sy, sw, sh, 0, 0, W, H);
+          if (sharpenOn) {
+            const dt = performance.now() - t0;
+            slowFrames = dt > frameBudget * 0.6 ? slowFrames + 1 : Math.max(0, slowFrames - 1);
+            if (slowFrames > 20) {
+              sharpenAllowed = false;
+              sharpenOn = false;
+              ctx2d.filter = "none";
+            }
+          }
         }
 
         drawRafRef.current = requestAnimationFrame(draw);
@@ -264,6 +316,13 @@ export function useRecorder(settings: RecorderSettings) {
       const recorder = new MediaRecorder(mixed, {
         ...(mimeType ? { mimeType } : {}),
         videoBitsPerSecond: bitrate,
+      });
+      const trackSettings = videoTrack?.getSettings();
+      setCaptureInfo({
+        width: canvas.width,
+        height: canvas.height,
+        fps: Math.round(trackSettings?.frameRate ?? settings.fps),
+        codec: codecLabel(mimeType),
       });
 
       chunksRef.current = [];
@@ -346,6 +405,7 @@ export function useRecorder(settings: RecorderSettings) {
     error,
     recordings,
     stream,
+    captureInfo,
     zoom,
     setZoom,
     nudgeZoom,
