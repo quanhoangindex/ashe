@@ -166,7 +166,7 @@ export function useRecorder(settings: RecorderSettings) {
       const canvas = document.createElement("canvas");
       canvas.width = sourceVideo.videoWidth || target.width || 1920;
       canvas.height = sourceVideo.videoHeight || target.height || 1080;
-      const ctx2d = canvas.getContext("2d", { alpha: false })!;
+      const ctx2d = canvas.getContext("2d", { alpha: false, desynchronized: true })!;
       ctx2d.imageSmoothingEnabled = true;
       ctx2d.imageSmoothingQuality = "high";
 
@@ -174,6 +174,7 @@ export function useRecorder(settings: RecorderSettings) {
       currentRef.current = { scale: 1, cx: 0.5, cy: 0.5 };
       setZoomState(1);
 
+      let smoothing = true;
       const draw = () => {
         const W = canvas.width;
         const H = canvas.height;
@@ -185,13 +186,23 @@ export function useRecorder(settings: RecorderSettings) {
         c.cx += (t.cx - c.cx) * e;
         c.cy += (t.cy - c.cy) * e;
 
-        const sw = W / c.scale;
-        const sh = H / c.scale;
-        const sx = Math.min(Math.max(c.cx * W - sw / 2, 0), W - sw);
-        const sy = Math.min(Math.max(c.cy * H - sh / 2, 0), H - sh);
+        // Past ~1.6x every source pixel is stretched; bilinear turns text to mush,
+        // so switch to a hard upscale that keeps glyph edges crisp.
+        const wantSmoothing = c.scale < 1.6;
+        if (wantSmoothing !== smoothing) {
+          smoothing = wantSmoothing;
+          ctx2d.imageSmoothingEnabled = wantSmoothing;
+        }
+
+        // Snap the crop to whole source pixels — sub-pixel crops blur the whole frame.
+        const sw = Math.round(W / c.scale);
+        const sh = Math.round(H / c.scale);
+        const sx = Math.round(Math.min(Math.max(c.cx * W - sw / 2, 0), W - sw));
+        const sy = Math.round(Math.min(Math.max(c.cy * H - sh / 2, 0), H - sh));
         if (sourceVideo.readyState >= 2) {
           ctx2d.drawImage(sourceVideo, sx, sy, sw, sh, 0, 0, W, H);
         }
+
         drawRafRef.current = requestAnimationFrame(draw);
       };
       draw();
