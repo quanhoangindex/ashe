@@ -113,20 +113,20 @@ export function useRecorder(settings: RecorderSettings) {
 
     try {
       const native = nativeScreenSize();
-      const target =
-        preset.key === "native"
-          ? native
-          : { width: preset.width, height: preset.height };
+      // Always grab the screen at its true pixel size, whatever preset is picked.
+      // Zooming crops into those pixels, so capturing small is what made zoom blurry.
+      const target = native;
 
       const videoConstraints = {
-        width: { ideal: target.width, max: native.width },
-        height: { ideal: target.height, max: native.height },
-        frameRate: { ideal: settings.fps },
+        width: { ideal: target.width, max: target.width },
+        height: { ideal: target.height, max: target.height },
+        frameRate: { ideal: settings.fps, max: settings.fps },
         displaySurface: settings.mode === "window" ? "window" : "monitor",
         cursor: settings.cursor ? "always" : "never",
         // Never let the browser rescale the capture — rescaling is what softens text.
         resizeMode: "none",
       } as MediaTrackConstraints;
+
 
       const display = await navigator.mediaDevices.getDisplayMedia({
         video: videoConstraints,
