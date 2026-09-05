@@ -1,14 +1,18 @@
-import { useEffect, useRef } from "react";
-import { Circle, Pause, Play, Square } from "lucide-react";
+import { useCallback, useEffect, useRef } from "react";
+import { Circle, Maximize2, Pause, Play, Square, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatDuration } from "@/lib/recorder-types";
+import { MAX_ZOOM, MIN_ZOOM } from "@/lib/use-recorder";
 
 type Props = {
   stream: MediaStream | null;
   status: "idle" | "recording" | "paused";
   elapsed: number;
   level: number;
+  zoom: number;
+  onZoom: (next: number, focus?: { x: number; y: number }) => void;
+  onResetZoom: () => void;
   onStart: () => void;
   onStop: () => void;
   onTogglePause: () => void;
@@ -19,11 +23,16 @@ export function StageView({
   status,
   elapsed,
   level,
+  zoom,
+  onZoom,
+  onResetZoom,
   onStart,
   onStop,
   onTogglePause,
 }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const zoomRef = useRef(zoom);
+  zoomRef.current = zoom;
 
   useEffect(() => {
     if (videoRef.current) videoRef.current.srcObject = stream;
@@ -31,15 +40,62 @@ export function StageView({
 
   const live = status !== "idle";
 
+  /** Where in the full frame (0..1) the pointer is, accounting for current zoom + letterboxing. */
+  const pointToFrame = useCallback((clientX: number, clientY: number) => {
+    const el = videoRef.current;
+    if (!el) return null;
+    const rect = el.getBoundingClientRect();
+    const vw = el.videoWidth || rect.width;
+    const vh = el.videoHeight || rect.height;
+    const scale = Math.min(rect.width / vw, rect.height / vh);
+    const dw = vw * scale;
+    const dh = vh * scale;
+    const ox = (rect.width - dw) / 2;
+    const oy = (rect.height - dh) / 2;
+    const u = (clientX - rect.left - ox) / dw;
+    const v = (clientY - rect.top - oy) / dh;
+    if (u < 0 || u > 1 || v < 0 || v > 1) return null;
+    // The preview already shows the zoomed crop, so map back into full-frame space.
+    const z = zoomRef.current;
+    return { x: 0.5 + (u - 0.5) / z, y: 0.5 + (v - 0.5) / z };
+  }, []);
+
+  const handleWheelRef = useRef<(e: WheelEvent) => void>(() => {});
+  handleWheelRef.current = (e: WheelEvent) => {
+    if (!live) return;
+    const dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 100 : 1);
+    const next = zoomRef.current * Math.exp(-dy * 0.0015);
+    onZoom(next, pointToFrame(e.clientX, e.clientY) ?? undefined);
+  };
+
+  useEffect(() => {
+    const el = videoRef.current?.parentElement;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      handleWheelRef.current(e);
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
+
   return (
     <section className="panel overflow-hidden">
-      <div className="relative aspect-video w-full bg-primary">
+      <div className="relative aspect-video w-full touch-none bg-primary">
         <video
           ref={videoRef}
           autoPlay
           muted
           playsInline
-          className={cn("size-full object-contain", live ? "opacity-100" : "opacity-0")}
+          onClick={(e) => {
+            if (!live) return;
+            const p = pointToFrame(e.clientX, e.clientY);
+            if (p) onZoom(zoomRef.current > 1 ? zoomRef.current : 2, p);
+          }}
+          className={cn(
+            "size-full object-contain",
+            live ? "opacity-100 cursor-crosshair" : "opacity-0",
+          )}
         />
         {!live && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-grain">
@@ -59,6 +115,42 @@ export function StageView({
             />
             {status === "recording" ? "Recording" : "Paused"} · {formatDuration(elapsed)}
           </div>
+        )}
+        {live && (
+          <div className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-card/90 p-1 text-xs font-semibold shadow-soft backdrop-blur">
+            <button
+              type="button"
+              aria-label="Zoom out"
+              onClick={() => onZoom(zoom / 1.4)}
+              disabled={zoom <= MIN_ZOOM + 0.001}
+              className="flex size-7 items-center justify-center rounded-full hover:bg-accent disabled:opacity-40"
+            >
+              <ZoomOut className="size-4" />
+            </button>
+            <span className="w-12 text-center font-mono tabular-nums">{zoom.toFixed(1)}×</span>
+            <button
+              type="button"
+              aria-label="Zoom in"
+              onClick={() => onZoom(zoom * 1.4)}
+              disabled={zoom >= MAX_ZOOM - 0.001}
+              className="flex size-7 items-center justify-center rounded-full hover:bg-accent disabled:opacity-40"
+            >
+              <ZoomIn className="size-4" />
+            </button>
+            <button
+              type="button"
+              aria-label="Reset zoom"
+              onClick={onResetZoom}
+              className="flex size-7 items-center justify-center rounded-full hover:bg-accent"
+            >
+              <Maximize2 className="size-4" />
+            </button>
+          </div>
+        )}
+        {live && (
+          <p className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-card/80 px-3 py-1 text-[11px] text-muted-foreground backdrop-blur">
+            Scroll or click the preview to zoom — it's baked into the recording
+          </p>
         )}
       </div>
 

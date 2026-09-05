@@ -91,6 +91,9 @@ function Index() {
 
         <div className="space-y-6">
           <StageView
+            zoom={recorder.zoom}
+            onZoom={recorder.setZoom}
+            onResetZoom={recorder.resetZoom}
             stream={recorder.stream}
             status={recorder.status}
             elapsed={recorder.elapsed}
