@@ -3,7 +3,7 @@ import { Circle, Maximize2, Pause, Play, Square, ZoomIn, ZoomOut } from "lucide-
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatDuration } from "@/lib/recorder-types";
-import { MAX_ZOOM, MIN_ZOOM } from "@/lib/use-recorder";
+import { MAX_ZOOM, MIN_ZOOM, type CaptureInfo } from "@/lib/use-recorder";
 
 type Props = {
   stream: MediaStream | null;
@@ -11,6 +11,7 @@ type Props = {
   elapsed: number;
   level: number;
   zoom: number;
+  captureInfo: CaptureInfo | null;
   onZoom: (next: number, focus?: { x: number; y: number }) => void;
   onResetZoom: () => void;
   onStart: () => void;
@@ -24,6 +25,7 @@ export function StageView({
   elapsed,
   level,
   zoom,
+  captureInfo,
   onZoom,
   onResetZoom,
   onStart,
@@ -147,12 +149,16 @@ export function StageView({
             </button>
           </div>
         )}
+        {live && captureInfo && (
+          <span className="absolute bottom-3 left-4 rounded-full bg-card/80 px-2.5 py-1 font-mono text-[11px] tabular-nums text-muted-foreground backdrop-blur">
+            {captureInfo.width}×{captureInfo.height} · {captureInfo.fps} fps · {captureInfo.codec}
+          </span>
+        )}
         {live && (
-          <p className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-card/80 px-3 py-1 text-[11px] text-muted-foreground backdrop-blur">
-            Scroll or click here, or press Ctrl/⌘ + Alt + − / = / 0 from any window — zoom follows
-            your mouse and is baked into the recording
+          <p className="absolute bottom-3 left-1/2 max-w-[60%] -translate-x-1/2 truncate rounded-full bg-card/80 px-3 py-1 text-[11px] text-muted-foreground backdrop-blur">
+            Scroll or click here, or press Ctrl/⌘ + Alt + − / = / 0 — zoom follows your mouse and is
+            baked into the recording
           </p>
-
         )}
       </div>
 

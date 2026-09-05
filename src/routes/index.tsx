@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Circle, Minus, Radio, Settings2 } from "lucide-react";
 import { ControlPanel } from "@/components/recorder/ControlPanel";
@@ -54,23 +54,34 @@ function Index() {
   useDesktopZoom(recorder.setZoom);
 
   // Same hotkeys inside the app window, so zoom works without the desktop build too.
+  // Matched on the physical key (e.code) because Alt/AltGr changes e.key on Mac and
+  // on non-US layouts ("≠", "–", "}" …), which is why key-based matching never fired.
+  const recorderRef = useRef(recorder);
+  recorderRef.current = recorder;
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (!(e.ctrlKey || e.metaKey) || !e.altKey) return;
-      if (e.key === "=" || e.key === "+") {
+      const code = e.code;
+      const key = e.key;
+      const zoomIn =
+        code === "Equal" || code === "NumpadAdd" || key === "=" || key === "+";
+      const zoomOut =
+        code === "Minus" || code === "NumpadSubtract" || key === "-" || key === "_";
+      const reset = code === "Digit0" || code === "Numpad0" || key === "0";
+      if (zoomIn) {
         e.preventDefault();
-        recorder.nudgeZoom(1.4);
-      } else if (e.key === "-" || e.key === "_") {
+        recorderRef.current.nudgeZoom(1.4);
+      } else if (zoomOut) {
         e.preventDefault();
-        recorder.nudgeZoom(1 / 1.4);
-      } else if (e.key === "0") {
+        recorderRef.current.nudgeZoom(1 / 1.4);
+      } else if (reset) {
         e.preventDefault();
-        recorder.resetZoom();
+        recorderRef.current.resetZoom();
       }
     };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [recorder]);
+    window.addEventListener("keydown", onKey, { capture: true });
+    return () => window.removeEventListener("keydown", onKey, { capture: true });
+  }, []);
 
   const update = useCallback(
     (next: Partial<RecorderSettings>) => setSettings((prev) => ({ ...prev, ...next })),
@@ -115,6 +126,7 @@ function Index() {
             zoom={recorder.zoom}
             onZoom={recorder.setZoom}
             onResetZoom={recorder.resetZoom}
+            captureInfo={recorder.captureInfo}
             stream={recorder.stream}
             status={recorder.status}
             elapsed={recorder.elapsed}

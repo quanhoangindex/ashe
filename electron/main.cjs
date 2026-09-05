@@ -94,8 +94,14 @@ function registerShortcuts() {
   };
   bind("CommandOrControl+Alt+=", () => step(1.4));
   bind("CommandOrControl+Alt+Plus", () => step(1.4));
+  bind("CommandOrControl+Alt+numadd", () => step(1.4));
   bind("CommandOrControl+Alt+-", () => step(1 / 1.4));
+  bind("CommandOrControl+Alt+numsub", () => step(1 / 1.4));
   bind("CommandOrControl+Alt+0", () => {
+    zoomLevel = 1;
+    pushZoom();
+  });
+  bind("CommandOrControl+Alt+num0", () => {
     zoomLevel = 1;
     pushZoom();
   });
