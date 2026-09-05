@@ -137,6 +137,10 @@ export function ControlPanel({ settings, onChange, disabled }: Props) {
             </button>
           ))}
         </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Native records your screen at its true pixel size, so text stays readable when you zoom
+          in. Picking more than your screen actually has can't add extra detail.
+        </p>
       </div>
 
       <div>
