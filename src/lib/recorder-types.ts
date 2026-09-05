@@ -1,6 +1,6 @@
 export type CaptureMode = "screen" | "window";
 
-export type QualityKey = "720p" | "1080p" | "1440p" | "4k";
+export type QualityKey = "720p" | "1080p" | "1440p" | "4k" | "native";
 
 export type QualityPreset = {
   key: QualityKey;
@@ -16,7 +16,25 @@ export const QUALITY_PRESETS: QualityPreset[] = [
   { key: "1080p", label: "1080p", hint: "Balanced · 6 Mbps", width: 1920, height: 1080, bitrate: 6_000_000 },
   { key: "1440p", label: "1440p", hint: "Sharp · 12 Mbps", width: 2560, height: 1440, bitrate: 12_000_000 },
   { key: "4k", label: "4K", hint: "Max · 28 Mbps", width: 3840, height: 2160, bitrate: 28_000_000 },
+  {
+    key: "native",
+    label: "Native · sharpest",
+    hint: "Your exact screen pixels · 50 Mbps",
+    width: 0,
+    height: 0,
+    bitrate: 50_000_000,
+  },
 ];
+
+/** True pixel size of the display, including Retina / scaling factor. */
+export function nativeScreenSize() {
+  if (typeof window === "undefined") return { width: 1920, height: 1080 };
+  const dpr = window.devicePixelRatio || 1;
+  return {
+    width: Math.round(window.screen.width * dpr),
+    height: Math.round(window.screen.height * dpr),
+  };
+}
 
 export const FRAME_RATES = [24, 30, 60] as const;
 export type FrameRate = (typeof FRAME_RATES)[number];

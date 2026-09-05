@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   QUALITY_PRESETS,
+  nativeScreenSize,
   type QualityKey,
   type Recording,
   type RecorderSettings,
@@ -63,12 +64,20 @@ export function useRecorder(settings: RecorderSettings) {
     qualityRef.current = preset.key;
 
     try {
+      const native = nativeScreenSize();
+      const target =
+        preset.key === "native"
+          ? native
+          : { width: preset.width, height: preset.height };
+
       const videoConstraints = {
-        width: { ideal: preset.width },
-        height: { ideal: preset.height },
+        width: { ideal: target.width, max: native.width },
+        height: { ideal: target.height, max: native.height },
         frameRate: { ideal: settings.fps },
         displaySurface: settings.mode === "window" ? "window" : "monitor",
         cursor: settings.cursor ? "always" : "never",
+        // Never let the browser rescale the capture — rescaling is what softens text.
+        resizeMode: "none",
       } as MediaTrackConstraints;
 
       const display = await navigator.mediaDevices.getDisplayMedia({
@@ -76,6 +85,22 @@ export function useRecorder(settings: RecorderSettings) {
         audio: settings.systemAudio,
       });
       streamsRef.current.push(display);
+
+      const videoTrack = display.getVideoTracks()[0];
+      if (videoTrack) {
+        // Tell the encoder this is crisp UI/text, not motion video: keeps edges sharp.
+        videoTrack.contentHint = "detail";
+        try {
+          await videoTrack.applyConstraints({
+            width: { ideal: target.width },
+            height: { ideal: target.height },
+            frameRate: { ideal: settings.fps },
+            resizeMode: "none",
+          } as MediaTrackConstraints);
+        } catch {
+          /* some browsers reject re-constraining a display track */
+        }
+      }
 
       const tracks: MediaStreamTrack[] = [...display.getVideoTracks()];
       const audioSources: MediaStream[] = [];
