@@ -149,8 +149,10 @@ export function StageView({
         )}
         {live && (
           <p className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-card/80 px-3 py-1 text-[11px] text-muted-foreground backdrop-blur">
-            Scroll or click the preview to zoom — it's baked into the recording
+            Scroll or click here, or press Ctrl/⌘ + Alt + − / = / 0 from any window — zoom follows
+            your mouse and is baked into the recording
           </p>
+
         )}
       </div>
 
