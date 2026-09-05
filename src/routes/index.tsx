@@ -5,6 +5,7 @@ import { ControlPanel } from "@/components/recorder/ControlPanel";
 import { RecordingsList } from "@/components/recorder/RecordingsList";
 import { StageView } from "@/components/recorder/StageView";
 import { useRecorder } from "@/lib/use-recorder";
+import { useDesktopTray } from "@/lib/desktop-bridge";
 import { formatDuration, type RecorderSettings } from "@/lib/recorder-types";
 import { cn } from "@/lib/utils";
 
@@ -43,6 +44,12 @@ function Index() {
   const [settings, setSettings] = useState<RecorderSettings>(DEFAULT_SETTINGS);
   const [trayCollapsed, setTrayCollapsed] = useState(false);
   const recorder = useRecorder(settings);
+
+  useDesktopTray(recorder.status, {
+    start: recorder.start,
+    stop: recorder.stop,
+    togglePause: recorder.togglePause,
+  });
 
   const update = useCallback(
     (next: Partial<RecorderSettings>) => setSettings((prev) => ({ ...prev, ...next })),
