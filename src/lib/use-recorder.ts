@@ -255,10 +255,17 @@ export function useRecorder(settings: RecorderSettings) {
       setStream(mixed);
 
       const mimeType = pickMimeType();
+      // Zoomed-in frames need far more bits than the preset assumes, so scale the
+      // bitrate to the real pixel count and frame rate, never below the preset.
+      const bitrate = Math.min(
+        120_000_000,
+        Math.max(preset.bitrate, Math.round(canvas.width * canvas.height * settings.fps * 0.15)),
+      );
       const recorder = new MediaRecorder(mixed, {
         ...(mimeType ? { mimeType } : {}),
-        videoBitsPerSecond: preset.bitrate,
+        videoBitsPerSecond: bitrate,
       });
+
       chunksRef.current = [];
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) chunksRef.current.push(e.data);
