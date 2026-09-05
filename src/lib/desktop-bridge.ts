@@ -9,7 +9,26 @@ type DesktopBridge = {
   ) => Promise<{ id: string; name: string; thumbnail: string; isScreen: boolean }[]>;
   setRecordingState: (state: string) => void;
   onTrayCommand: (handler: (cmd: TrayCommand) => void) => () => void;
+  onZoomCommand?: (
+    handler: (payload: { zoom: number; x: number; y: number }) => void,
+  ) => () => void;
 };
+
+export function isDesktopApp() {
+  return bridge() !== null;
+}
+
+/** System-wide zoom: hotkeys fired from anywhere, anchored on the real mouse position. */
+export function useDesktopZoom(onZoom: (zoom: number, focus: { x: number; y: number }) => void) {
+  const handlerRef = useRef(onZoom);
+  handlerRef.current = onZoom;
+
+  useEffect(() => {
+    const api = bridge();
+    if (!api?.onZoomCommand) return;
+    return api.onZoomCommand(({ zoom, x, y }) => handlerRef.current(zoom, { x, y }));
+  }, []);
+}
 
 function bridge(): DesktopBridge | null {
   if (typeof window === "undefined") return null;

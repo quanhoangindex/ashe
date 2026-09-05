@@ -113,20 +113,20 @@ export function useRecorder(settings: RecorderSettings) {
 
     try {
       const native = nativeScreenSize();
-      const target =
-        preset.key === "native"
-          ? native
-          : { width: preset.width, height: preset.height };
+      // Always grab the screen at its true pixel size, whatever preset is picked.
+      // Zooming crops into those pixels, so capturing small is what made zoom blurry.
+      const target = native;
 
       const videoConstraints = {
-        width: { ideal: target.width, max: native.width },
-        height: { ideal: target.height, max: native.height },
-        frameRate: { ideal: settings.fps },
+        width: { ideal: target.width, max: target.width },
+        height: { ideal: target.height, max: target.height },
+        frameRate: { ideal: settings.fps, max: settings.fps },
         displaySurface: settings.mode === "window" ? "window" : "monitor",
         cursor: settings.cursor ? "always" : "never",
         // Never let the browser rescale the capture — rescaling is what softens text.
         resizeMode: "none",
       } as MediaTrackConstraints;
+
 
       const display = await navigator.mediaDevices.getDisplayMedia({
         video: videoConstraints,
@@ -166,7 +166,7 @@ export function useRecorder(settings: RecorderSettings) {
       const canvas = document.createElement("canvas");
       canvas.width = sourceVideo.videoWidth || target.width || 1920;
       canvas.height = sourceVideo.videoHeight || target.height || 1080;
-      const ctx2d = canvas.getContext("2d", { alpha: false })!;
+      const ctx2d = canvas.getContext("2d", { alpha: false, desynchronized: true })!;
       ctx2d.imageSmoothingEnabled = true;
       ctx2d.imageSmoothingQuality = "high";
 
@@ -174,6 +174,7 @@ export function useRecorder(settings: RecorderSettings) {
       currentRef.current = { scale: 1, cx: 0.5, cy: 0.5 };
       setZoomState(1);
 
+      let smoothing = true;
       const draw = () => {
         const W = canvas.width;
         const H = canvas.height;
@@ -185,13 +186,23 @@ export function useRecorder(settings: RecorderSettings) {
         c.cx += (t.cx - c.cx) * e;
         c.cy += (t.cy - c.cy) * e;
 
-        const sw = W / c.scale;
-        const sh = H / c.scale;
-        const sx = Math.min(Math.max(c.cx * W - sw / 2, 0), W - sw);
-        const sy = Math.min(Math.max(c.cy * H - sh / 2, 0), H - sh);
+        // Past ~1.6x every source pixel is stretched; bilinear turns text to mush,
+        // so switch to a hard upscale that keeps glyph edges crisp.
+        const wantSmoothing = c.scale < 1.6;
+        if (wantSmoothing !== smoothing) {
+          smoothing = wantSmoothing;
+          ctx2d.imageSmoothingEnabled = wantSmoothing;
+        }
+
+        // Snap the crop to whole source pixels — sub-pixel crops blur the whole frame.
+        const sw = Math.round(W / c.scale);
+        const sh = Math.round(H / c.scale);
+        const sx = Math.round(Math.min(Math.max(c.cx * W - sw / 2, 0), W - sw));
+        const sy = Math.round(Math.min(Math.max(c.cy * H - sh / 2, 0), H - sh));
         if (sourceVideo.readyState >= 2) {
           ctx2d.drawImage(sourceVideo, sx, sy, sw, sh, 0, 0, W, H);
         }
+
         drawRafRef.current = requestAnimationFrame(draw);
       };
       draw();
@@ -244,10 +255,17 @@ export function useRecorder(settings: RecorderSettings) {
       setStream(mixed);
 
       const mimeType = pickMimeType();
+      // Zoomed-in frames need far more bits than the preset assumes, so scale the
+      // bitrate to the real pixel count and frame rate, never below the preset.
+      const bitrate = Math.min(
+        120_000_000,
+        Math.max(preset.bitrate, Math.round(canvas.width * canvas.height * settings.fps * 0.15)),
+      );
       const recorder = new MediaRecorder(mixed, {
         ...(mimeType ? { mimeType } : {}),
-        videoBitsPerSecond: preset.bitrate,
+        videoBitsPerSecond: bitrate,
       });
+
       chunksRef.current = [];
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) chunksRef.current.push(e.data);

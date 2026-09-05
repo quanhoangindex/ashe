@@ -1,11 +1,11 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Circle, Minus, Radio, Settings2 } from "lucide-react";
 import { ControlPanel } from "@/components/recorder/ControlPanel";
 import { RecordingsList } from "@/components/recorder/RecordingsList";
 import { StageView } from "@/components/recorder/StageView";
 import { useRecorder } from "@/lib/use-recorder";
-import { useDesktopTray } from "@/lib/desktop-bridge";
+import { useDesktopTray, useDesktopZoom } from "@/lib/desktop-bridge";
 import { formatDuration, type RecorderSettings } from "@/lib/recorder-types";
 import { cn } from "@/lib/utils";
 
@@ -50,6 +50,27 @@ function Index() {
     stop: recorder.stop,
     togglePause: recorder.togglePause,
   });
+
+  useDesktopZoom(recorder.setZoom);
+
+  // Same hotkeys inside the app window, so zoom works without the desktop build too.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (!(e.ctrlKey || e.metaKey) || !e.altKey) return;
+      if (e.key === "=" || e.key === "+") {
+        e.preventDefault();
+        recorder.nudgeZoom(1.4);
+      } else if (e.key === "-" || e.key === "_") {
+        e.preventDefault();
+        recorder.nudgeZoom(1 / 1.4);
+      } else if (e.key === "0") {
+        e.preventDefault();
+        recorder.resetZoom();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [recorder]);
 
   const update = useCallback(
     (next: Partial<RecorderSettings>) => setSettings((prev) => ({ ...prev, ...next })),
