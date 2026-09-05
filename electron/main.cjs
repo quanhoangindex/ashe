@@ -7,6 +7,8 @@ const {
   nativeImage,
   ipcMain,
   desktopCapturer,
+  globalShortcut,
+  screen,
 } = require("electron");
 
 const APP_URL = process.env.APP_URL || "http://localhost:8080";
@@ -40,8 +42,65 @@ function createWindow() {
   });
 }
 
-function send(channel) {
-  if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send(channel);
+function send(channel, payload) {
+  if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send(channel, payload);
+}
+
+// ---- Global zoom: works while the user is in any other window ----
+let zoomLevel = 1;
+let followTimer = null;
+
+/** Where the mouse is, as 0..1 inside the display it currently sits on. */
+function cursorPoint() {
+  try {
+    const p = screen.getCursorScreenPoint();
+    const b = screen.getDisplayNearestPoint(p).bounds;
+    return {
+      x: Math.min(1, Math.max(0, (p.x - b.x) / b.width)),
+      y: Math.min(1, Math.max(0, (p.y - b.y) / b.height)),
+    };
+  } catch {
+    return { x: 0.5, y: 0.5 };
+  }
+}
+
+function pushZoom() {
+  const point = cursorPoint();
+  send("zoom:set", { zoom: zoomLevel, x: point.x, y: point.y });
+  if (zoomLevel > 1 && !followTimer) {
+    // Keep the zoom window glued to the mouse so the user can move around.
+    followTimer = setInterval(() => {
+      const p = cursorPoint();
+      send("zoom:set", { zoom: zoomLevel, x: p.x, y: p.y });
+    }, 120);
+  }
+  if (zoomLevel <= 1 && followTimer) {
+    clearInterval(followTimer);
+    followTimer = null;
+  }
+}
+
+function registerShortcuts() {
+  const bind = (accel, fn) => {
+    try {
+      globalShortcut.register(accel, fn);
+    } catch {
+      /* accelerator unavailable on this OS */
+    }
+  };
+  const step = (factor) => {
+    zoomLevel = Math.min(6, Math.max(1, zoomLevel * factor));
+    pushZoom();
+  };
+  bind("CommandOrControl+Alt+=", () => step(1.4));
+  bind("CommandOrControl+Alt+Plus", () => step(1.4));
+  bind("CommandOrControl+Alt+-", () => step(1 / 1.4));
+  bind("CommandOrControl+Alt+0", () => {
+    zoomLevel = 1;
+    pushZoom();
+  });
+  bind("CommandOrControl+Alt+R", () => send(recordingState === "idle" ? "tray:start" : "tray:stop"));
+  bind("CommandOrControl+Alt+P", () => send("tray:toggle-pause"));
 }
 
 function buildTrayMenu() {
@@ -100,6 +159,13 @@ ipcMain.handle("capture:sources", async (_event, types) => {
 
 ipcMain.on("recorder:state", (_event, state) => {
   recordingState = state;
+  if (state === "idle") {
+    zoomLevel = 1;
+    if (followTimer) {
+      clearInterval(followTimer);
+      followTimer = null;
+    }
+  }
   if (tray) {
     tray.setContextMenu(buildTrayMenu());
     tray.setToolTip(state === "idle" ? "Reel — idle" : `Reel — ${state}`);
@@ -109,6 +175,7 @@ ipcMain.on("recorder:state", (_event, state) => {
 app.whenReady().then(() => {
   createWindow();
   createTray();
+  registerShortcuts();
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
@@ -118,6 +185,8 @@ app.whenReady().then(() => {
 
 app.on("before-quit", () => {
   app.isQuitting = true;
+  globalShortcut.unregisterAll();
+  if (followTimer) clearInterval(followTimer);
 });
 
 app.on("window-all-closed", () => {
