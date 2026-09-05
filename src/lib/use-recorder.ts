@@ -58,20 +58,21 @@ export function useRecorder(settings: RecorderSettings) {
 
   const start = useCallback(async () => {
     setError(null);
-    const preset =
-      QUALITY_PRESETS.find((p) => p.key === settings.quality) ?? QUALITY_PRESETS[1];
+    const preset = (QUALITY_PRESETS.find((p) => p.key === settings.quality) ??
+      QUALITY_PRESETS[1])!;
     qualityRef.current = preset.key;
 
     try {
+      const videoConstraints = {
+        width: { ideal: preset.width },
+        height: { ideal: preset.height },
+        frameRate: { ideal: settings.fps },
+        displaySurface: settings.mode === "window" ? "window" : "monitor",
+        cursor: settings.cursor ? "always" : "never",
+      } as MediaTrackConstraints;
+
       const display = await navigator.mediaDevices.getDisplayMedia({
-        video: {
-          width: { ideal: preset.width },
-          height: { ideal: preset.height },
-          frameRate: { ideal: settings.fps },
-          // @ts-expect-error non-standard but widely supported hints
-          displaySurface: settings.mode === "window" ? "window" : "monitor",
-          cursor: settings.cursor ? "always" : "never",
-        },
+        video: videoConstraints,
         audio: settings.systemAudio,
       });
       streamsRef.current.push(display);
@@ -108,7 +109,7 @@ export function useRecorder(settings: RecorderSettings) {
           analyser.getByteTimeDomainData(buffer);
           let peak = 0;
           for (let i = 0; i < buffer.length; i += 1) {
-            peak = Math.max(peak, Math.abs(buffer[i] - 128) / 128);
+            peak = Math.max(peak, Math.abs((buffer[i] ?? 128) - 128) / 128);
           }
           setLevel(peak);
           rafRef.current = requestAnimationFrame(tick);
