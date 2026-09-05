@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 type TrayCommand = "start" | "stop" | "toggle-pause";
 
@@ -25,13 +25,16 @@ export function useDesktopTray(
     bridge()?.setRecordingState(status);
   }, [status]);
 
+  const actionsRef = useRef(actions);
+  actionsRef.current = actions;
+
   useEffect(() => {
     const api = bridge();
     if (!api) return;
     return api.onTrayCommand((cmd) => {
-      if (cmd === "start") actions.start();
-      if (cmd === "stop") actions.stop();
-      if (cmd === "toggle-pause") actions.togglePause();
+      if (cmd === "start") actionsRef.current.start();
+      if (cmd === "stop") actionsRef.current.stop();
+      if (cmd === "toggle-pause") actionsRef.current.togglePause();
     });
-  }, [actions]);
+  }, []);
 }
