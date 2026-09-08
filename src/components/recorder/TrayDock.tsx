@@ -121,9 +121,21 @@ export function TrayDock() {
 
         <span className="mx-1 h-6 w-px bg-border/60" aria-hidden />
 
+        {isDesktop && (
+          <button
+            type="button"
+            aria-label="Show floating controls"
+            onClick={() => overlayControls.show()}
+            className={iconButton}
+          >
+            <PictureInPicture2 className="size-4" />
+          </button>
+        )}
+
         <Link to="/settings" aria-label="Open settings" className={iconButton}>
           <Settings2 className="size-4" />
         </Link>
+
         <button
           type="button"
           onClick={() => setCollapsed(true)}
