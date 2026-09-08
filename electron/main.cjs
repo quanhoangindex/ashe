@@ -148,7 +148,17 @@ function createTray() {
   tray = new Tray(icon);
   tray.setToolTip("Reel — screen recorder");
   tray.setContextMenu(buildTrayMenu());
+  // On Windows a left click should reopen the window; on Mac it opens the menu.
+  tray.on("click", () => {
+    if (process.platform !== "win32") return;
+    if (!mainWindow || mainWindow.isDestroyed()) createWindow();
+    else {
+      mainWindow.show();
+      mainWindow.focus();
+    }
+  });
 }
+
 
 ipcMain.handle("capture:sources", async (_event, types) => {
   const sources = await desktopCapturer.getSources({
