@@ -236,12 +236,67 @@ ipcMain.on("recorder:state", (_event, state) => {
       clearInterval(followTimer);
       followTimer = null;
     }
+    hideOverlay();
+  } else {
+    showOverlay();
   }
   if (tray) {
     tray.setContextMenu(buildTrayMenu());
     tray.setToolTip(state === "idle" ? "Reel — idle" : `Reel — ${state}`);
   }
 });
+
+// Live status + mini preview frames travel main window -> overlay window.
+ipcMain.on("overlay:update", (_event, payload) => {
+  if (overlayWindow && !overlayWindow.isDestroyed() && overlayWindow.isVisible()) {
+    overlayWindow.webContents.send("overlay:data", payload);
+  }
+});
+
+ipcMain.on("overlay:command", (_event, command) => {
+  if (command === "zoom-in") {
+    zoomLevel = Math.min(6, zoomLevel * 1.4);
+    pushZoom();
+    return;
+  }
+  if (command === "zoom-out") {
+    zoomLevel = Math.max(1, zoomLevel / 1.4);
+    pushZoom();
+    return;
+  }
+  if (command === "zoom-reset") {
+    zoomLevel = 1;
+    pushZoom();
+    return;
+  }
+  if (command === "open") {
+    if (!mainWindow || mainWindow.isDestroyed()) createWindow();
+    else {
+      mainWindow.show();
+      mainWindow.focus();
+    }
+    return;
+  }
+  send(`tray:${command}`);
+});
+
+ipcMain.on("overlay:preview", (_event, visible) => {
+  overlayPreview = Boolean(visible);
+  if (overlayWindow && !overlayWindow.isDestroyed()) {
+    const height = overlayPreview ? OVERLAY_H_FULL : OVERLAY_H_SMALL;
+    const bounds = overlayWindow.getBounds();
+    overlayWindow.setBounds({
+      x: bounds.x,
+      y: bounds.y + (bounds.height - height),
+      width: OVERLAY_W,
+      height,
+    });
+  }
+});
+
+ipcMain.on("overlay:hide", () => hideOverlay());
+ipcMain.on("overlay:show", () => showOverlay());
+
 
 app.whenReady().then(() => {
   createWindow();
