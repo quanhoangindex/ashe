@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
+import stageIdleAsset from "@/assets/stage-idle.jpg.asset.json";
 import { Circle, Maximize2, Pause, Play, Square, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
