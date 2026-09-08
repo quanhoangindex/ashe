@@ -3,7 +3,6 @@ import { Film } from "lucide-react";
 import { RecordingsList } from "@/components/recorder/RecordingsList";
 import { StageView } from "@/components/recorder/StageView";
 import { useRecorderContext } from "@/lib/recorder-provider";
-import { QUALITY_PRESETS } from "@/lib/recorder-types";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -29,8 +28,6 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const recorder = useRecorderContext();
-  const { settings } = recorder;
-  const preset = QUALITY_PRESETS.find((p) => p.key === settings.quality);
 
   return (
     <div className="min-h-screen bg-background">
