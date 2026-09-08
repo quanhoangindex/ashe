@@ -1,10 +1,21 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Circle, Maximize2, Minus, Radio, Settings2, ZoomIn, ZoomOut } from "lucide-react";
+import {
+  Circle,
+  Maximize2,
+  Minus,
+  PictureInPicture2,
+  Radio,
+  Settings2,
+  ZoomIn,
+  ZoomOut,
+} from "lucide-react";
 import { useRecorderContext } from "@/lib/recorder-provider";
 import { MAX_ZOOM, MIN_ZOOM } from "@/lib/use-recorder";
+import { overlayControls, useIsDesktopApp } from "@/lib/desktop-bridge";
 import { formatDuration } from "@/lib/recorder-types";
 import { cn } from "@/lib/utils";
+
 
 const iconButton =
   "glass-button flex size-8 shrink-0 items-center justify-center rounded-full disabled:opacity-40";
