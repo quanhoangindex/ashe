@@ -231,11 +231,13 @@
  * actions stay on glass-action (blue).
  */
 @utility glass-button {
-  background-color: color-mix(in oklab, var(--color-card) 72%, transparent);
-  border: 1px solid color-mix(in oklab, var(--color-card) 78%, var(--color-border));
+  background-color: color-mix(in oklab, var(--color-card) 70%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-card) 75%, var(--color-border));
   box-shadow:
     var(--shadow-soft),
-    inset 0 1px 0 color-mix(in oklab, white 70%, transparent);
+    inset 0 1px 0 color-mix(in oklab, white 80%, transparent),
+    inset 0 2px 6px color-mix(in oklab, white 18%, transparent),
+    inset 0 -1px 0 color-mix(in oklab, var(--color-foreground) 5%, transparent);
   backdrop-filter: blur(20px) saturate(180%);
   transition:
     background-color 180ms ease,
@@ -246,8 +248,9 @@
     background-color: color-mix(in oklab, var(--color-card) 86%, white 14%);
     box-shadow:
       var(--shadow-lift),
-      inset 0 1px 0 color-mix(in oklab, white 86%, transparent),
-      inset 0 2px 5px color-mix(in oklab, white 24%, transparent);
+      inset 0 1px 0 color-mix(in oklab, white 90%, transparent),
+      inset 0 2px 6px color-mix(in oklab, white 28%, transparent),
+      inset 0 -1px 0 color-mix(in oklab, var(--color-foreground) 4%, transparent);
   }
 
   &:active:not(:disabled) {
