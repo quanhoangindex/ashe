@@ -53,7 +53,7 @@ function ToggleRow({
 
 export function ControlPanel({ settings, onChange, disabled }: Props) {
   return (
-    <aside className="panel flex h-full flex-col gap-6 p-5">
+    <aside className="glass-panel flex h-full flex-col gap-6 p-5">
       <div>
         <SectionTitle>Capture source</SectionTitle>
         <div className="grid grid-cols-2 gap-2">

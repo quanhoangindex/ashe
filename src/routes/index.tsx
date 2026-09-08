@@ -92,7 +92,7 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background bg-grain">
-      <header className="sticky top-0 z-20 border-b border-border bg-background/85 backdrop-blur">
+      <header className="sticky top-0 z-20 border-b border-border/50 bg-background/60 backdrop-blur-2xl backdrop-saturate-150">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-6 py-4">
           <span className="flex size-9 items-center justify-center rounded-xl bg-brand text-brand-foreground">
             <Radio className="size-4" />
@@ -103,8 +103,8 @@ function Index() {
           </div>
           <div
             className={cn(
-              "ml-auto flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium",
-              live ? "border-live/40 bg-accent text-accent-foreground" : "border-border bg-surface",
+              "glass-group ml-auto gap-2 rounded-full px-3 py-1.5 text-xs font-medium",
+              live && "text-accent-foreground",
             )}
           >
             <Circle
@@ -117,6 +117,7 @@ function Index() {
           </div>
         </div>
       </header>
+
 
       <main className="mx-auto grid max-w-6xl gap-6 px-6 py-8 lg:grid-cols-[320px_1fr]">
         <ControlPanel settings={settings} onChange={update} disabled={live} />
@@ -157,20 +158,20 @@ function Index() {
           <button
             type="button"
             onClick={() => setTrayCollapsed(false)}
-            className="flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lift"
+            className="glass-group glass-interactive flex size-12 items-center justify-center rounded-full shadow-lift"
             aria-label="Open tray controls"
           >
             <Radio className="size-5" />
           </button>
         ) : (
-          <div className="panel flex items-center gap-3 px-4 py-3 shadow-lift">
+          <div className="glass-group gap-3 rounded-full px-4 py-2.5 shadow-lift">
             <Circle
               className={cn(
                 "size-2.5 fill-current",
                 live ? "text-live pulse-live" : "text-muted-foreground",
               )}
             />
-            <div className="mr-2">
+            <div className="mr-1">
               <p className="text-xs font-semibold leading-tight">Tray controls</p>
               <p className="font-mono text-xs text-muted-foreground tabular-nums">
                 {formatDuration(recorder.elapsed)}
@@ -181,14 +182,14 @@ function Index() {
                 <button
                   type="button"
                   onClick={recorder.togglePause}
-                  className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs font-medium hover:bg-accent"
+                  className="glass-interactive rounded-full border border-border/50 px-3 py-1.5 text-xs font-medium"
                 >
                   {recorder.status === "recording" ? "Pause" : "Resume"}
                 </button>
                 <button
                   type="button"
                   onClick={recorder.stop}
-                  className="rounded-lg bg-destructive px-3 py-1.5 text-xs font-medium text-destructive-foreground hover:opacity-90"
+                  className="glass-danger glass-interactive rounded-full px-3 py-1.5 text-xs font-medium"
                 >
                   Stop
                 </button>
@@ -197,7 +198,7 @@ function Index() {
               <button
                 type="button"
                 onClick={recorder.start}
-                className="rounded-lg bg-brand px-3 py-1.5 text-xs font-medium text-brand-foreground hover:opacity-90"
+                className="glass-action glass-interactive rounded-full px-3 py-1.5 text-xs font-medium"
               >
                 Record
               </button>
@@ -213,6 +214,7 @@ function Index() {
           </div>
         )}
       </div>
+
     </div>
   );
 }

@@ -82,7 +82,7 @@ export function StageView({
   }, []);
 
   return (
-    <section className="panel overflow-hidden">
+    <section className="glass-panel overflow-hidden">
       <div className="relative aspect-video w-full touch-none bg-primary">
         <video
           ref={videoRef}
@@ -108,7 +108,7 @@ export function StageView({
           </div>
         )}
         {live && (
-          <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-card/90 px-3 py-1.5 text-xs font-semibold shadow-soft backdrop-blur">
+          <div className="glass-group absolute left-4 top-4 gap-2 rounded-full px-3 py-1.5 text-xs font-semibold">
             <Circle
               className={cn(
                 "size-2.5 fill-current text-live",
@@ -119,13 +119,13 @@ export function StageView({
           </div>
         )}
         {live && (
-          <div className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-card/90 p-1 text-xs font-semibold shadow-soft backdrop-blur">
+          <div className="glass-group absolute right-4 top-4 gap-1 rounded-full p-1 text-xs font-semibold">
             <button
               type="button"
               aria-label="Zoom out"
               onClick={() => onZoom(zoom / 1.4)}
               disabled={zoom <= MIN_ZOOM + 0.001}
-              className="flex size-7 items-center justify-center rounded-full hover:bg-accent disabled:opacity-40"
+              className="glass-interactive flex size-7 items-center justify-center rounded-full disabled:opacity-40"
             >
               <ZoomOut className="size-4" />
             </button>
@@ -135,7 +135,7 @@ export function StageView({
               aria-label="Zoom in"
               onClick={() => onZoom(zoom * 1.4)}
               disabled={zoom >= MAX_ZOOM - 0.001}
-              className="flex size-7 items-center justify-center rounded-full hover:bg-accent disabled:opacity-40"
+              className="glass-interactive flex size-7 items-center justify-center rounded-full disabled:opacity-40"
             >
               <ZoomIn className="size-4" />
             </button>
@@ -143,38 +143,59 @@ export function StageView({
               type="button"
               aria-label="Reset zoom"
               onClick={onResetZoom}
-              className="flex size-7 items-center justify-center rounded-full hover:bg-accent"
+              className="glass-interactive flex size-7 items-center justify-center rounded-full"
             >
               <Maximize2 className="size-4" />
             </button>
           </div>
         )}
-        {live && captureInfo && (
-          <span className="absolute bottom-3 left-4 rounded-full bg-card/80 px-2.5 py-1 font-mono text-[11px] tabular-nums text-muted-foreground backdrop-blur">
-            {captureInfo.width}×{captureInfo.height} · {captureInfo.fps} fps · {captureInfo.codec}
-          </span>
+        {live && (
+          <div className="glass-group absolute bottom-3 left-4 gap-2 rounded-full px-2.5 py-1">
+            {captureInfo && (
+              <span className="font-mono text-[11px] tabular-nums text-muted-foreground">
+                {captureInfo.width}×{captureInfo.height} · {captureInfo.fps} fps ·{" "}
+                {captureInfo.codec}
+              </span>
+            )}
+          </div>
         )}
         {live && (
-          <p className="absolute bottom-3 left-1/2 max-w-[60%] -translate-x-1/2 truncate rounded-full bg-card/80 px-3 py-1 text-[11px] text-muted-foreground backdrop-blur">
+          <p className="glass-group absolute bottom-3 left-1/2 max-w-[60%] -translate-x-1/2 truncate rounded-full px-3 py-1 text-[11px] text-muted-foreground">
             Scroll or click here, or press Ctrl/⌘ + Alt + − / = / 0 — zoom follows your mouse and is
             baked into the recording
           </p>
         )}
+
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 border-t border-border p-4">
+      <div className="flex flex-wrap items-center gap-3 border-t border-border/60 p-4">
         {status === "idle" ? (
-          <Button size="lg" onClick={onStart} className="gap-2">
+          <Button
+            size="lg"
+            variant="ghost"
+            onClick={onStart}
+            className="glass-action glass-interactive gap-2 hover:text-brand-foreground"
+          >
             <Circle className="size-3.5 fill-current" />
             Start recording
           </Button>
         ) : (
           <>
-            <Button size="lg" variant="destructive" onClick={onStop} className="gap-2">
+            <Button
+              size="lg"
+              variant="ghost"
+              onClick={onStop}
+              className="glass-danger glass-interactive gap-2 hover:text-destructive-foreground"
+            >
               <Square className="size-3.5 fill-current" />
               Stop
             </Button>
-            <Button size="lg" variant="secondary" onClick={onTogglePause} className="gap-2">
+            <Button
+              size="lg"
+              variant="ghost"
+              onClick={onTogglePause}
+              className="glass-group glass-interactive gap-2 rounded-md px-6"
+            >
               {status === "recording" ? (
                 <>
                   <Pause className="size-4" /> Pause
@@ -187,6 +208,8 @@ export function StageView({
             </Button>
           </>
         )}
+
+
 
         <div className="ml-auto flex items-center gap-2">
           <span className="text-xs text-muted-foreground">Sound</span>
