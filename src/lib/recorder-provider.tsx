@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { useRecorder } from "@/lib/use-recorder";
-import { useDesktopTray, useDesktopZoom } from "@/lib/desktop-bridge";
+import { useDesktopTray, useDesktopZoom, useOverlayBroadcast } from "@/lib/desktop-bridge";
 import type { RecorderSettings } from "@/lib/recorder-types";
 
 const DEFAULT_SETTINGS: RecorderSettings = {
@@ -69,9 +69,20 @@ export function RecorderProvider({ children }: { children: ReactNode }) {
     start: recorder.start,
     stop: recorder.stop,
     togglePause: recorder.togglePause,
+    nudgeZoom: recorder.nudgeZoom,
+    resetZoom: recorder.resetZoom,
   });
 
   useDesktopZoom(recorder.setZoom);
+
+  // Mirror the live take into the small floating window that sits over other apps.
+  useOverlayBroadcast({
+    status: recorder.status,
+    elapsed: recorder.elapsed,
+    zoom: recorder.zoom,
+    stream: recorder.stream,
+  });
+
 
   // Same hotkeys inside the app window, so zoom works without the desktop build too.
   // Matched on the physical key (e.code) because Alt/AltGr changes e.key on Mac and

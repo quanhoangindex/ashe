@@ -1,10 +1,21 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Circle, Maximize2, Minus, Radio, Settings2, ZoomIn, ZoomOut } from "lucide-react";
+import {
+  Circle,
+  Maximize2,
+  Minus,
+  PictureInPicture2,
+  Radio,
+  Settings2,
+  ZoomIn,
+  ZoomOut,
+} from "lucide-react";
 import { useRecorderContext } from "@/lib/recorder-provider";
 import { MAX_ZOOM, MIN_ZOOM } from "@/lib/use-recorder";
+import { overlayControls, useIsDesktopApp } from "@/lib/desktop-bridge";
 import { formatDuration } from "@/lib/recorder-types";
 import { cn } from "@/lib/utils";
+
 
 const iconButton =
   "glass-button flex size-8 shrink-0 items-center justify-center rounded-full disabled:opacity-40";
@@ -13,7 +24,9 @@ const iconButton =
 export function TrayDock() {
   const [collapsed, setCollapsed] = useState(false);
   const rec = useRecorderContext();
+  const isDesktop = useIsDesktopApp();
   const live = rec.status !== "idle";
+
 
   if (collapsed) {
     return (
@@ -108,9 +121,21 @@ export function TrayDock() {
 
         <span className="mx-1 h-6 w-px bg-border/60" aria-hidden />
 
+        {isDesktop && (
+          <button
+            type="button"
+            aria-label="Show floating controls"
+            onClick={() => overlayControls.show()}
+            className={iconButton}
+          >
+            <PictureInPicture2 className="size-4" />
+          </button>
+        )}
+
         <Link to="/settings" aria-label="Open settings" className={iconButton}>
           <Settings2 className="size-4" />
         </Link>
+
         <button
           type="button"
           onClick={() => setCollapsed(true)}
