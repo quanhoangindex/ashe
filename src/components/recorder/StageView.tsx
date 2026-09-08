@@ -195,7 +195,7 @@ export function StageView({
               size="lg"
               variant="ghost"
               onClick={onTogglePause}
-              className="glass-group glass-interactive gap-2 rounded-md px-6"
+              className="glass-button gap-2 rounded-md px-6"
             >
               {status === "recording" ? (
                 <>

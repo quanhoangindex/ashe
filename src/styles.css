@@ -116,8 +116,8 @@
   --secondary-foreground: oklch(0.96 0.008 88);
   --muted: oklch(0.28 0.016 60);
   --muted-foreground: oklch(0.72 0.02 75);
-  --accent: oklch(0.32 0.04 50);
-  --accent-foreground: oklch(0.95 0.02 80);
+  --accent: oklch(0.32 0.05 255);
+  --accent-foreground: oklch(0.95 0.02 250);
   --destructive: oklch(0.65 0.19 25);
   --destructive-foreground: oklch(0.98 0.005 90);
   --border: oklch(1 0 0 / 12%);
@@ -222,6 +222,59 @@
   @media (prefers-reduced-transparency: reduce) {
     background-color: var(--color-card);
     backdrop-filter: none;
+  }
+}
+
+/*
+ * glass-button: a standalone neutral glass button (NOT brand-tinted).
+ * Use for secondary controls (pause, zoom, gear, collapse). Primary
+ * actions stay on glass-action (blue).
+ */
+@utility glass-button {
+  background-color: color-mix(in oklab, var(--color-card) 72%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-card) 78%, var(--color-border));
+  box-shadow:
+    var(--shadow-soft),
+    inset 0 1px 0 color-mix(in oklab, white 70%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+
+  &:hover:not(:disabled) {
+    background-color: color-mix(in oklab, var(--color-card) 86%, white 14%);
+    box-shadow:
+      var(--shadow-lift),
+      inset 0 1px 0 color-mix(in oklab, white 86%, transparent),
+      inset 0 2px 5px color-mix(in oklab, white 24%, transparent);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:active:not(:disabled) {
+      transform: none;
+    }
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    background-color: var(--color-card);
+
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklab, var(--color-card) 78%, white);
+    }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: var(--color-card);
+    backdrop-filter: none;
+
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklab, var(--color-card) 78%, white);
+    }
   }
 }
 

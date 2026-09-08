@@ -7,7 +7,7 @@ import { formatDuration } from "@/lib/recorder-types";
 import { cn } from "@/lib/utils";
 
 const iconButton =
-  "glass-interactive flex size-8 items-center justify-center rounded-full disabled:opacity-40";
+  "glass-button flex size-8 shrink-0 items-center justify-center rounded-full disabled:opacity-40";
 
 /** Floating dock that mirrors the system tray menu: record, pause, stop and zoom. */
 export function TrayDock() {
@@ -51,7 +51,7 @@ export function TrayDock() {
             <button
               type="button"
               onClick={rec.togglePause}
-              className="glass-interactive rounded-full border border-border/50 px-3 py-1.5 text-xs font-medium"
+              className="glass-button rounded-full px-3 py-1.5 text-xs font-medium"
             >
               {rec.status === "recording" ? "Pause" : "Resume"}
             </button>
@@ -114,7 +114,7 @@ export function TrayDock() {
         <button
           type="button"
           onClick={() => setCollapsed(true)}
-          className="ml-1 rounded-full p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          className="glass-button ml-1 flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:text-foreground"
           aria-label="Collapse tray controls"
         >
           <Minus className="size-4" />
