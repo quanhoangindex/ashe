@@ -92,15 +92,6 @@ export function AppHeader() {
           <SettingsGear label="Settings" />
         </nav>
 
-        <div className="glass-group gap-2 rounded-full px-3 py-1.5 text-xs font-medium">
-          <Circle
-            className={cn(
-              "size-2 fill-current",
-              live ? "text-live pulse-live" : "text-muted-foreground",
-            )}
-          />
-          {live ? `Live · ${formatDuration(elapsed)}` : "Idle"}
-        </div>
       </div>
     </header>
   );
