@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
+import stageIdleAsset from "@/assets/stage-idle.jpg.asset.json";
 import { Circle, Maximize2, Pause, Play, Square, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -101,7 +102,10 @@ export function StageView({
           )}
         />
         {!live && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-grain">
+          <div
+            className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-cover bg-center"
+            style={{ backgroundImage: `url(${stageIdleAsset.url})` }}
+          >
             <span className="text-display text-4xl text-primary-foreground">Ready when you are</span>
             <p className="max-w-sm text-center text-sm text-primary-foreground/70">
               Hit record to pick your screen or window. A live preview shows up here, and you can change what gets captured in Settings.
