@@ -1,34 +1,36 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Circle, Radio } from "lucide-react";
+import { Circle, Radio, Settings } from "lucide-react";
 import { useRecorderContext } from "@/lib/recorder-provider";
 import { formatDuration } from "@/lib/recorder-types";
 import { cn } from "@/lib/utils";
 
 const tabBase =
-  "relative rounded-full px-3 py-1.5 text-xs font-medium transition-colors";
+  "relative flex items-center justify-center rounded-full size-9 transition-colors";
 
 function tabClass(isActive: boolean) {
   return isActive
     ? cn(tabBase, "glass-action text-brand-foreground shadow-soft")
     : cn(
         tabBase,
-        "glass-interactive text-muted-foreground hover:text-foreground",
+        "glass-group glass-interactive text-muted-foreground hover:text-foreground",
       );
 }
 
 function GlassTab({
   to,
   exact,
+  label,
   children,
 }: {
   to: "/" | "/settings";
   exact?: boolean;
+  label: string;
   children: React.ReactNode;
 }) {
   const { pathname } = useLocation();
   const isActive = exact ? pathname === to : pathname.startsWith(to);
   return (
-    <Link to={to} className={tabClass(isActive)}>
+    <Link to={to} aria-label={label} title={label} className={tabClass(isActive)}>
       {children}
     </Link>
   );
@@ -50,10 +52,12 @@ export function AppHeader() {
         </div>
 
         <nav className="glass-group ml-auto gap-1 rounded-full p-1" aria-label="Primary">
-          <GlassTab to="/" exact>
+          <GlassTab to="/" exact label="Record">
             Record
           </GlassTab>
-          <GlassTab to="/settings">Settings</GlassTab>
+          <GlassTab to="/settings" label="Settings">
+            <Settings className="size-4" />
+          </GlassTab>
         </nav>
 
         <div className="glass-group gap-2 rounded-full px-3 py-1.5 text-xs font-medium">
