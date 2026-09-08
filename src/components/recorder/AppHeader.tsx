@@ -4,8 +4,17 @@ import { useRecorderContext } from "@/lib/recorder-provider";
 import { formatDuration } from "@/lib/recorder-types";
 import { cn } from "@/lib/utils";
 
-const navLink =
-  "glass-interactive rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground";
+const tabBase =
+  "relative rounded-full px-3 py-1.5 text-xs font-medium transition-colors";
+
+function tabClass(isActive: boolean) {
+  return isActive
+    ? cn(tabBase, "glass-action text-brand-foreground shadow-soft")
+    : cn(
+        tabBase,
+        "glass-interactive text-muted-foreground hover:text-foreground",
+      );
+}
 
 export function AppHeader() {
   const { status, elapsed } = useRecorderContext();
@@ -22,19 +31,17 @@ export function AppHeader() {
           <p className="text-xs text-muted-foreground">Desktop screen recorder</p>
         </div>
 
-        <nav className="glass-group ml-auto gap-1 rounded-full p-1">
+        <nav className="glass-group ml-auto gap-1 rounded-full p-1" aria-label="Primary">
           <Link
             to="/"
             activeOptions={{ exact: true }}
-            activeProps={{ className: "bg-accent text-accent-foreground" }}
-            className={navLink}
+            className={({ isActive }: { isActive: boolean }) => tabClass(isActive)}
           >
             Record
           </Link>
           <Link
             to="/settings"
-            activeProps={{ className: "bg-accent text-accent-foreground" }}
-            className={navLink}
+            className={({ isActive }: { isActive: boolean }) => tabClass(isActive)}
           >
             Settings
           </Link>
