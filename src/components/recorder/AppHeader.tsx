@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Radio, Settings } from "lucide-react";
+import { Disc, Radio, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const tabBase =
