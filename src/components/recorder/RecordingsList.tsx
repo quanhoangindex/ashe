@@ -26,7 +26,7 @@ export function RecordingsList({
   return (
     <div className="glass-panel divide-y divide-border/60">
       {recordings.map((rec) => (
-        <div key={rec.id} className="flex items-center gap-4 p-4">
+        <div key={rec.id} className="flex items-center gap-4 p-4 transition-colors hover:bg-accent/40">
           <video
             src={rec.url}
             className="h-16 w-28 shrink-0 rounded-lg border border-border bg-secondary object-cover"

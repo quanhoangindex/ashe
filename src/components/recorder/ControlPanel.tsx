@@ -38,8 +38,8 @@ function ToggleRow({
   disabled: boolean;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-border/70 bg-surface px-3 py-2.5">
-      <span className="flex size-8 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+    <div className="flex items-center gap-3 rounded-xl border border-border/70 bg-surface px-3 py-2.5 transition-colors hover:border-brand/40 hover:bg-accent/60">
+      <span className="flex size-8 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-colors group-hover:bg-accent">
         <Icon className="size-4" />
       </span>
       <div className="min-w-0 flex-1">
@@ -72,7 +72,7 @@ export function ControlPanel({ settings, onChange, disabled }: Props) {
                 "flex flex-col items-start gap-2 rounded-xl border px-3 py-3 text-left transition-colors disabled:opacity-50",
                 settings.mode === key
                   ? "border-brand bg-accent text-accent-foreground"
-                  : "border-border bg-surface hover:bg-accent/60",
+                  : "border-border bg-surface hover:border-brand/40 hover:bg-accent",
               )}
             >
               <Icon className="size-4" />
@@ -129,7 +129,7 @@ export function ControlPanel({ settings, onChange, disabled }: Props) {
                 preset.key === "native" && "col-span-2",
                 settings.quality === preset.key
                   ? "border-brand bg-accent text-accent-foreground"
-                  : "border-border bg-surface hover:bg-accent/60",
+                  : "border-border bg-surface hover:border-brand/40 hover:bg-accent",
               )}
             >
               <span className="block text-sm font-semibold">{preset.label}</span>
@@ -156,7 +156,7 @@ export function ControlPanel({ settings, onChange, disabled }: Props) {
                 "flex-1 rounded-xl border py-2 text-sm font-medium transition-colors disabled:opacity-50",
                 settings.fps === fps
                   ? "border-brand bg-accent text-accent-foreground"
-                  : "border-border bg-surface hover:bg-accent/60",
+                  : "border-border bg-surface hover:border-brand/40 hover:bg-accent",
               )}
             >
               {fps} fps
