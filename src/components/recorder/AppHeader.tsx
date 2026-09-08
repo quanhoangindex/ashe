@@ -5,33 +5,61 @@ import { formatDuration } from "@/lib/recorder-types";
 import { cn } from "@/lib/utils";
 
 const tabBase =
-  "relative flex h-7 min-w-7 shrink-0 items-center justify-center gap-1 rounded-full px-2.5 text-xs font-medium whitespace-nowrap transition-colors";
+  "relative flex h-6 min-w-6 shrink-0 items-center justify-center gap-1 rounded-full px-2 text-xs font-medium whitespace-nowrap";
 
-function tabClass(isActive: boolean) {
+function recordTabClass(isActive: boolean) {
   return isActive
     ? cn(tabBase, "glass-action text-brand-foreground shadow-soft")
-    : cn(
-        tabBase,
-        "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-      );
+    : cn(tabBase, "glass-button text-muted-foreground hover:text-foreground");
 }
 
-function GlassTab({
-  to,
+function settingsGearClass(isActive: boolean) {
+  return isActive
+    ? cn(
+        tabBase,
+        "glass-button bg-accent/50 text-foreground ring-1 ring-border",
+      )
+    : cn(tabBase, "glass-button text-muted-foreground hover:text-foreground");
+}
+
+function RecordTab({
   exact,
   label,
   children,
 }: {
-  to: "/" | "/settings";
   exact?: boolean;
   label: string;
   children: React.ReactNode;
 }) {
   const { pathname } = useLocation();
-  const isActive = exact ? pathname === to : pathname.startsWith(to);
+  const isActive = exact ? pathname === "/" : pathname.startsWith("/");
   return (
-    <Link to={to} aria-label={label} title={label} className={tabClass(isActive)}>
+    <Link
+      to="/"
+      aria-label={label}
+      title={label}
+      className={recordTabClass(isActive)}
+    >
       {children}
+    </Link>
+  );
+}
+
+function SettingsGear({
+  label,
+}: {
+  label: string;
+}) {
+  const { pathname } = useLocation();
+  const isActive = pathname.startsWith("/settings");
+  return (
+    <Link
+      to="/settings"
+      aria-label={label}
+      title={label}
+      className={settingsGearClass(isActive)}
+    >
+      <Settings className="size-4" />
     </Link>
   );
 }
