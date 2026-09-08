@@ -92,7 +92,7 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background bg-grain">
-      <header className="sticky top-0 z-20 border-b border-border bg-background/85 backdrop-blur">
+      <header className="sticky top-0 z-20 border-b border-border/50 bg-background/60 backdrop-blur-2xl backdrop-saturate-150">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-6 py-4">
           <span className="flex size-9 items-center justify-center rounded-xl bg-brand text-brand-foreground">
             <Radio className="size-4" />
@@ -103,8 +103,8 @@ function Index() {
           </div>
           <div
             className={cn(
-              "ml-auto flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium",
-              live ? "border-live/40 bg-accent text-accent-foreground" : "border-border bg-surface",
+              "glass-group ml-auto gap-2 rounded-full px-3 py-1.5 text-xs font-medium",
+              live && "text-accent-foreground",
             )}
           >
             <Circle
@@ -117,6 +117,7 @@ function Index() {
           </div>
         </div>
       </header>
+
 
       <main className="mx-auto grid max-w-6xl gap-6 px-6 py-8 lg:grid-cols-[320px_1fr]">
         <ControlPanel settings={settings} onChange={update} disabled={live} />
