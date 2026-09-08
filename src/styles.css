@@ -277,6 +277,8 @@
 
     &:hover:not(:disabled) {
       background-color: color-mix(in oklab, var(--color-card) 78%, white);
+    }
+  }
 }
 
 /*
@@ -331,8 +333,6 @@
     &:hover:not(:disabled) {
       background-color: var(--color-card);
     }
-  }
-}
   }
 }
 
