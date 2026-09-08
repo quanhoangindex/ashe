@@ -464,6 +464,114 @@
   }
 }
 
+@utility glass-outline-primary {
+  background-color: color-mix(in oklab, var(--color-background) 42%, transparent);
+  color: var(--color-primary);
+  border: 1px solid color-mix(in oklab, var(--color-primary) 40%, transparent);
+  box-shadow:
+    var(--shadow-soft),
+    inset 0 1px 0 color-mix(in oklab, white 70%, transparent),
+    inset 0 2px 6px color-mix(in oklab, var(--color-primary) 10%, transparent),
+    inset 0 -1px 0 color-mix(in oklab, var(--color-primary) 8%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+
+  &:hover:not(:disabled) {
+    background-color: color-mix(in oklab, var(--color-primary) 10%, transparent);
+    border-color: color-mix(in oklab, var(--color-primary) 65%, transparent);
+    box-shadow:
+      var(--shadow-lift),
+      inset 0 1px 0 color-mix(in oklab, white 80%, transparent),
+      inset 0 2px 6px color-mix(in oklab, var(--color-primary) 16%, transparent),
+      inset 0 -1px 0 color-mix(in oklab, var(--color-primary) 10%, transparent);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:active:not(:disabled) {
+      transform: none;
+    }
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    background-color: var(--color-background);
+
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklab, var(--color-primary) 12%, var(--color-background));
+    }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: var(--color-background);
+    backdrop-filter: none;
+
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklab, var(--color-primary) 12%, var(--color-background));
+    }
+  }
+}
+
+@utility glass-outline-primary-active {
+  background-color: color-mix(in oklab, var(--color-primary) 14%, transparent);
+  color: var(--color-primary);
+  border: 1px solid color-mix(in oklab, var(--color-primary) 72%, transparent);
+  box-shadow:
+    var(--shadow-soft),
+    inset 0 1px 0 color-mix(in oklab, white 55%, transparent),
+    inset 0 2px 6px color-mix(in oklab, var(--color-primary) 20%, transparent),
+    inset 0 -1px 0 color-mix(in oklab, var(--color-primary) 18%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+
+  &:hover:not(:disabled) {
+    background-color: color-mix(in oklab, var(--color-primary) 20%, transparent);
+    border-color: color-mix(in oklab, var(--color-primary) 85%, transparent);
+    box-shadow:
+      var(--shadow-lift),
+      inset 0 1px 0 color-mix(in oklab, white 65%, transparent),
+      inset 0 2px 6px color-mix(in oklab, var(--color-primary) 26%, transparent),
+      inset 0 -1px 0 color-mix(in oklab, var(--color-primary) 18%, transparent);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:active:not(:disabled) {
+      transform: none;
+    }
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    background-color: color-mix(in oklab, var(--color-primary) 18%, var(--color-background));
+
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklab, var(--color-primary) 26%, var(--color-background));
+    }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: color-mix(in oklab, var(--color-primary) 18%, var(--color-background));
+    backdrop-filter: none;
+
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklab, var(--color-primary) 26%, var(--color-background));
+    }
+  }
+}
+
 
 @utility pulse-live {
   animation: pulse-live 1.6s ease-in-out infinite;
