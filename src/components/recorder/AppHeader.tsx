@@ -10,7 +10,7 @@ function tabClass(isActive: boolean) {
     ? cn(tabBase, "glass-action glass-interactive text-brand-foreground")
     : cn(
         tabBase,
-        "glass-button text-muted-foreground opacity-70 hover:opacity-100 hover:text-foreground",
+        "text-muted-foreground opacity-70 transition-colors hover:opacity-100 hover:text-foreground",
       );
 }
 
