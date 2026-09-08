@@ -5,24 +5,12 @@ import { cn } from "@/lib/utils";
 const tabBase =
   "relative flex h-8 min-w-8 shrink-0 items-center justify-center gap-1 rounded-full px-3 text-xs font-medium whitespace-nowrap";
 
-function recordTabClass(isActive: boolean) {
+function tabClass(isActive: boolean) {
   return isActive
     ? cn(tabBase, "glass-action glass-interactive text-brand-foreground")
     : cn(
         tabBase,
-        "glass-action glass-interactive text-brand-foreground",
-      );
-}
-
-function settingsGearClass(isActive: boolean) {
-  return isActive
-    ? cn(
-        tabBase,
-        "glass-button-raised text-foreground ring-1 ring-border",
-      )
-    : cn(
-        tabBase,
-        "glass-button text-muted-foreground hover:text-foreground",
+        "glass-button text-muted-foreground opacity-70 hover:opacity-100 hover:text-foreground",
       );
 }
 
@@ -42,7 +30,7 @@ function RecordTab({
       to="/"
       aria-label={label}
       title={label}
-      className={recordTabClass(isActive)}
+      className={tabClass(isActive)}
     >
       {children}
     </Link>
@@ -61,7 +49,7 @@ function SettingsGear({
       to="/settings"
       aria-label={label}
       title={label}
-      className={settingsGearClass(isActive)}
+      className={tabClass(isActive)}
     >
       <Settings className="size-4" />
     </Link>
