@@ -160,10 +160,13 @@
 @utility bg-grain {
   background-image: radial-gradient(
       circle at 12% 8%,
-      oklch(0.68 0.17 42 / 0.1),
+      oklch(0.68 0.17 42 / 0.16),
       transparent 42%
     ),
-    radial-gradient(circle at 88% 0%, oklch(0.72 0.13 75 / 0.12), transparent 46%);
+    radial-gradient(circle at 88% 0%, oklch(0.72 0.13 75 / 0.18), transparent 46%),
+    radial-gradient(circle at 78% 62%, oklch(0.62 0.14 340 / 0.1), transparent 44%),
+    radial-gradient(circle at 4% 78%, oklch(0.6 0.12 200 / 0.1), transparent 40%);
+  background-attachment: fixed;
 }
 
 @utility panel {
@@ -172,6 +175,122 @@
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-soft);
 }
+
+/*
+ * Glass system — one shared surface language.
+ * glass-panel: large chrome surfaces. glass-group: a container that merges
+ * several adjacent controls into a single glass shape. glass-interactive:
+ * hover/press response for tappable glass. glass-action: translucent tinted
+ * button (the prominent action variant).
+ * Every one falls back to an opaque surface when blur is unavailable or the
+ * user asks for reduced transparency.
+ */
+
+@utility glass-panel {
+  background-color: color-mix(in oklab, var(--color-card) 62%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-card) 70%, var(--color-border));
+  border-radius: var(--radius-2xl);
+  box-shadow:
+    var(--shadow-soft),
+    inset 0 1px 0 color-mix(in oklab, var(--color-card) 92%, transparent);
+  backdrop-filter: blur(28px) saturate(180%);
+
+  @supports not (backdrop-filter: blur(1px)) {
+    background-color: var(--color-card);
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: var(--color-card);
+    backdrop-filter: none;
+  }
+}
+
+@utility glass-group {
+  display: flex;
+  align-items: center;
+  background-color: color-mix(in oklab, var(--color-card) 58%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-card) 65%, var(--color-border));
+  box-shadow:
+    var(--shadow-soft),
+    inset 0 1px 0 color-mix(in oklab, var(--color-card) 90%, transparent);
+  backdrop-filter: blur(24px) saturate(180%);
+
+  @supports not (backdrop-filter: blur(1px)) {
+    background-color: var(--color-card);
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: var(--color-card);
+    backdrop-filter: none;
+  }
+}
+
+@utility glass-interactive {
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+
+  &:hover:not(:disabled) {
+    background-color: color-mix(in oklab, var(--color-card) 88%, transparent);
+    box-shadow: var(--shadow-lift);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:active:not(:disabled) {
+      transform: none;
+    }
+  }
+}
+
+@utility glass-action {
+  background-color: color-mix(in oklab, var(--color-brand) 72%, transparent);
+  color: var(--color-brand-foreground);
+  border: 1px solid color-mix(in oklab, var(--color-brand) 55%, transparent);
+  box-shadow:
+    var(--shadow-soft),
+    inset 0 1px 0 color-mix(in oklab, white 35%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+
+  &:hover:not(:disabled) {
+    background-color: color-mix(in oklab, var(--color-brand) 90%, transparent);
+    box-shadow: var(--shadow-lift);
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    background-color: var(--color-brand);
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: var(--color-brand);
+    backdrop-filter: none;
+  }
+}
+
+@utility glass-danger {
+  background-color: color-mix(in oklab, var(--color-destructive) 70%, transparent);
+  color: var(--color-destructive-foreground);
+  border: 1px solid color-mix(in oklab, var(--color-destructive) 55%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+
+  &:hover:not(:disabled) {
+    background-color: color-mix(in oklab, var(--color-destructive) 90%, transparent);
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    background-color: var(--color-destructive);
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: var(--color-destructive);
+    backdrop-filter: none;
+  }
+}
+
 
 @utility pulse-live {
   animation: pulse-live 1.6s ease-in-out infinite;
