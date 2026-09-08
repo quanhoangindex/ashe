@@ -207,9 +207,7 @@ export function StageView({
           </>
         )}
 
-            </Button>
-          </>
-        )}
+
 
         <div className="ml-auto flex items-center gap-2">
           <span className="text-xs text-muted-foreground">Sound</span>
