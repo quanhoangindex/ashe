@@ -158,20 +158,20 @@ function Index() {
           <button
             type="button"
             onClick={() => setTrayCollapsed(false)}
-            className="flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lift"
+            className="glass-group glass-interactive flex size-12 items-center justify-center rounded-full shadow-lift"
             aria-label="Open tray controls"
           >
             <Radio className="size-5" />
           </button>
         ) : (
-          <div className="panel flex items-center gap-3 px-4 py-3 shadow-lift">
+          <div className="glass-group gap-3 rounded-full px-4 py-2.5 shadow-lift">
             <Circle
               className={cn(
                 "size-2.5 fill-current",
                 live ? "text-live pulse-live" : "text-muted-foreground",
               )}
             />
-            <div className="mr-2">
+            <div className="mr-1">
               <p className="text-xs font-semibold leading-tight">Tray controls</p>
               <p className="font-mono text-xs text-muted-foreground tabular-nums">
                 {formatDuration(recorder.elapsed)}
@@ -182,14 +182,14 @@ function Index() {
                 <button
                   type="button"
                   onClick={recorder.togglePause}
-                  className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs font-medium hover:bg-accent"
+                  className="glass-interactive rounded-full border border-border/50 px-3 py-1.5 text-xs font-medium"
                 >
                   {recorder.status === "recording" ? "Pause" : "Resume"}
                 </button>
                 <button
                   type="button"
                   onClick={recorder.stop}
-                  className="rounded-lg bg-destructive px-3 py-1.5 text-xs font-medium text-destructive-foreground hover:opacity-90"
+                  className="glass-danger glass-interactive rounded-full px-3 py-1.5 text-xs font-medium"
                 >
                   Stop
                 </button>
@@ -198,7 +198,7 @@ function Index() {
               <button
                 type="button"
                 onClick={recorder.start}
-                className="rounded-lg bg-brand px-3 py-1.5 text-xs font-medium text-brand-foreground hover:opacity-90"
+                className="glass-action glass-interactive rounded-full px-3 py-1.5 text-xs font-medium"
               >
                 Record
               </button>
@@ -214,6 +214,7 @@ function Index() {
           </div>
         )}
       </div>
+
     </div>
   );
 }
