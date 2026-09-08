@@ -9,10 +9,10 @@ const tabBase =
 
 function recordTabClass(isActive: boolean) {
   return isActive
-    ? cn(tabBase, "glass-action text-brand-foreground shadow-soft")
+    ? cn(tabBase, "glass-action glass-interactive text-brand-foreground")
     : cn(
         tabBase,
-        "glass-button-raised text-foreground hover:glass-button hover:text-muted-foreground",
+        "glass-action glass-interactive text-brand-foreground",
       );
 }
 
