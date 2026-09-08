@@ -1,11 +1,38 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Circle, Radio } from "lucide-react";
 import { useRecorderContext } from "@/lib/recorder-provider";
 import { formatDuration } from "@/lib/recorder-types";
 import { cn } from "@/lib/utils";
 
-const navLink =
-  "glass-interactive rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground";
+const tabBase =
+  "relative rounded-full px-3 py-1.5 text-xs font-medium transition-colors";
+
+function tabClass(isActive: boolean) {
+  return isActive
+    ? cn(tabBase, "glass-action text-brand-foreground shadow-soft")
+    : cn(
+        tabBase,
+        "glass-interactive text-muted-foreground hover:text-foreground",
+      );
+}
+
+function GlassTab({
+  to,
+  exact,
+  children,
+}: {
+  to: "/" | "/settings";
+  exact?: boolean;
+  children: React.ReactNode;
+}) {
+  const { pathname } = useLocation();
+  const isActive = exact ? pathname === to : pathname.startsWith(to);
+  return (
+    <Link to={to} className={tabClass(isActive)}>
+      {children}
+    </Link>
+  );
+}
 
 export function AppHeader() {
   const { status, elapsed } = useRecorderContext();
@@ -22,22 +49,11 @@ export function AppHeader() {
           <p className="text-xs text-muted-foreground">Desktop screen recorder</p>
         </div>
 
-        <nav className="glass-group ml-auto gap-1 rounded-full p-1">
-          <Link
-            to="/"
-            activeOptions={{ exact: true }}
-            activeProps={{ className: "bg-accent text-accent-foreground" }}
-            className={navLink}
-          >
+        <nav className="glass-group ml-auto gap-1 rounded-full p-1" aria-label="Primary">
+          <GlassTab to="/" exact>
             Record
-          </Link>
-          <Link
-            to="/settings"
-            activeProps={{ className: "bg-accent text-accent-foreground" }}
-            className={navLink}
-          >
-            Settings
-          </Link>
+          </GlassTab>
+          <GlassTab to="/settings">Settings</GlassTab>
         </nav>
 
         <div className="glass-group gap-2 rounded-full px-3 py-1.5 text-xs font-medium">
