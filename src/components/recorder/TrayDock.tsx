@@ -24,7 +24,9 @@ const iconButton =
 export function TrayDock() {
   const [collapsed, setCollapsed] = useState(false);
   const rec = useRecorderContext();
+  const isDesktop = useIsDesktopApp();
   const live = rec.status !== "idle";
+
 
   if (collapsed) {
     return (
