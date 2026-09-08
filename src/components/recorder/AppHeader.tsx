@@ -1,7 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Circle, Radio, Settings } from "lucide-react";
-import { useRecorderContext } from "@/lib/recorder-provider";
-import { formatDuration } from "@/lib/recorder-types";
+import { Radio, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const tabBase =
@@ -71,9 +69,6 @@ function SettingsGear({
 }
 
 export function AppHeader() {
-  const { status, elapsed } = useRecorderContext();
-  const live = status !== "idle";
-
   return (
     <header className="sticky top-0 z-20 border-b border-border/50 bg-background/60 backdrop-blur-2xl backdrop-saturate-150">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3 sm:px-6 sm:py-4">
