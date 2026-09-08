@@ -1,5 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Film, SlidersHorizontal } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
+import { Circle, Film } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { RecordingsList } from "@/components/recorder/RecordingsList";
 import { StageView } from "@/components/recorder/StageView";
 import { useRecorderContext } from "@/lib/recorder-provider";
@@ -33,7 +34,7 @@ function Index() {
   const preset = QUALITY_PRESETS.find((p) => p.key === settings.quality);
 
   return (
-    <div className="min-h-screen bg-background bg-grain">
+    <div className="min-h-screen bg-background">
       <main className="mx-auto max-w-5xl space-y-6 px-4 py-6 pb-32 sm:px-6 sm:py-8">
         <StageView
           zoom={recorder.zoom}
@@ -49,22 +50,36 @@ function Index() {
           onTogglePause={recorder.togglePause}
         />
 
-        <Link
-          to="/settings"
-          className="glass-panel glass-interactive flex items-center gap-3 px-4 py-3 text-left"
-        >
-          <span className="glass-button flex size-9 shrink-0 items-center justify-center rounded-xl">
-            <SlidersHorizontal className="size-4" />
+        <div className="glass-panel flex items-center gap-3 px-4 py-3">
+          <span
+            className={cn(
+              "flex size-9 shrink-0 items-center justify-center rounded-xl",
+              recorder.status === "recording"
+                ? "bg-live/10 text-live"
+                : "bg-brand/10 text-brand",
+            )}
+          >
+            <Circle
+              className={cn(
+                "size-2 fill-current",
+                recorder.status === "recording" && "pulse-live",
+              )}
+            />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-sm font-medium">Recording settings</span>
+            <span className="block text-sm font-medium">
+              {recorder.status === "recording"
+                ? "Recording…"
+                : recorder.status === "paused"
+                  ? "Paused"
+                  : "Ready to record"}
+            </span>
             <span className="block truncate text-xs text-muted-foreground">
               {settings.mode === "screen" ? "Full screen" : "A window"} · {preset?.label} ·{" "}
               {settings.fps} fps · {settings.cursor ? "cursor on" : "cursor off"}
             </span>
           </span>
-          <span className="text-xs font-medium text-muted-foreground">Change</span>
-        </Link>
+        </div>
 
         {recorder.error && (
           <p className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
