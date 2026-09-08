@@ -52,10 +52,12 @@ export function AppHeader() {
         </div>
 
         <nav className="glass-group ml-auto gap-1 rounded-full p-1" aria-label="Primary">
-          <GlassTab to="/" exact>
+          <GlassTab to="/" exact label="Record">
             Record
           </GlassTab>
-          <GlassTab to="/settings">Settings</GlassTab>
+          <GlassTab to="/settings" label="Settings">
+            <Settings className="size-4" />
+          </GlassTab>
         </nav>
 
         <div className="glass-group gap-2 rounded-full px-3 py-1.5 text-xs font-medium">
