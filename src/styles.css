@@ -319,19 +319,19 @@
   }
 
   @supports not (backdrop-filter: blur(1px)) {
-    background-color: color-mix(in oklab, var(--color-card) 78%, white);
+    background-color: color-mix(in oklab, var(--color-surface) 78%, white);
 
     &:hover:not(:disabled) {
-      background-color: var(--color-card);
+      background-color: var(--color-surface);
     }
   }
 
   @media (prefers-reduced-transparency: reduce) {
-    background-color: color-mix(in oklab, var(--color-card) 78%, white);
+    background-color: color-mix(in oklab, var(--color-surface) 78%, white);
     backdrop-filter: none;
 
     &:hover:not(:disabled) {
-      background-color: var(--color-card);
+      background-color: var(--color-surface);
     }
   }
 }
