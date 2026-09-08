@@ -1,4 +1,4 @@
-import { Link, useMatch } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Circle, Radio } from "lucide-react";
 import { useRecorderContext } from "@/lib/recorder-provider";
 import { formatDuration } from "@/lib/recorder-types";
@@ -25,8 +25,8 @@ function GlassTab({
   exact?: boolean;
   children: React.ReactNode;
 }) {
-  const match = useMatch({ from: to, shouldThrow: false });
-  const isActive = exact ? !!match?.isExact : !!match;
+  const { pathname } = useLocation();
+  const isActive = exact ? pathname === to : pathname.startsWith(to);
   return (
     <Link to={to} className={tabClass(isActive)}>
       {children}
