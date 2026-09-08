@@ -131,23 +131,16 @@ function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isOverlay = pathname === "/overlay";
 
-  if (isOverlay) {
-    return (
-      <QueryClientProvider client={queryClient}>
-        <Outlet />
-      </QueryClientProvider>
-    );
-  }
-
   return (
     <QueryClientProvider client={queryClient}>
       <RecorderProvider>
-        <AppHeader />
+        {!isOverlay && <AppHeader />}
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
-        <TrayDock />
+        {!isOverlay && <TrayDock />}
       </RecorderProvider>
     </QueryClientProvider>
+
   );
 }
 
