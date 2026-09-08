@@ -14,8 +14,63 @@ const {
 const APP_URL = process.env.APP_URL || "http://localhost:8080";
 
 let mainWindow = null;
+let overlayWindow = null;
+let overlayPreview = true;
 let tray = null;
 let recordingState = "idle";
+
+const OVERLAY_W = 360;
+const OVERLAY_H_SMALL = 84;
+const OVERLAY_H_FULL = 276;
+
+/** Small always-on-top window that stays visible over every other app. */
+function createOverlay() {
+  if (overlayWindow && !overlayWindow.isDestroyed()) return overlayWindow;
+  const area = screen.getPrimaryDisplay().workArea;
+  overlayWindow = new BrowserWindow({
+    width: OVERLAY_W,
+    height: overlayPreview ? OVERLAY_H_FULL : OVERLAY_H_SMALL,
+    x: area.x + area.width - OVERLAY_W - 24,
+    y: area.y + area.height - (overlayPreview ? OVERLAY_H_FULL : OVERLAY_H_SMALL) - 24,
+    frame: false,
+    transparent: true,
+    resizable: false,
+    movable: true,
+    skipTaskbar: true,
+    alwaysOnTop: true,
+    fullscreenable: false,
+    show: false,
+    hasShadow: false,
+    webPreferences: {
+      preload: path.join(__dirname, "preload.cjs"),
+      contextIsolation: true,
+      nodeIntegration: false,
+    },
+  });
+  overlayWindow.setAlwaysOnTop(true, "screen-saver");
+  overlayWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+  // Keep the floating controls out of the recording itself.
+  try {
+    overlayWindow.setContentProtection(true);
+  } catch {
+    /* not supported on this OS */
+  }
+  overlayWindow.loadURL(`${APP_URL}/overlay`);
+  overlayWindow.on("closed", () => {
+    overlayWindow = null;
+  });
+  return overlayWindow;
+}
+
+function showOverlay() {
+  const win = createOverlay();
+  if (!win.isVisible()) win.showInactive();
+}
+
+function hideOverlay() {
+  if (overlayWindow && !overlayWindow.isDestroyed()) overlayWindow.hide();
+}
+
 
 function createWindow() {
   mainWindow = new BrowserWindow({
