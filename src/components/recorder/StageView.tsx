@@ -3,6 +3,7 @@ import { Circle, Maximize2, Pause, Play, Square, ZoomIn, ZoomOut } from "lucide-
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatDuration } from "@/lib/recorder-types";
+import { modifierLabel } from "@/lib/platform";
 import { MAX_ZOOM, MIN_ZOOM, type CaptureInfo } from "@/lib/use-recorder";
 
 type Props = {
@@ -161,8 +162,8 @@ export function StageView({
         )}
         {live && (
           <p className="glass-group absolute bottom-3 left-1/2 max-w-[60%] -translate-x-1/2 truncate rounded-full px-3 py-1 text-[11px] text-muted-foreground">
-            Scroll or click here, or press Ctrl/⌘ + Alt + − / = / 0 — zoom follows your mouse and is
-            baked into the recording
+            Scroll or click here, or press {modifierLabel()} + − / = / 0 — zoom follows your mouse
+            and is baked into the recording
           </p>
         )}
 
