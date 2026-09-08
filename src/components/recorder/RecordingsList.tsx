@@ -41,7 +41,13 @@ export function RecordingsList({
             </p>
           </div>
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" asChild aria-label="Save recording">
+            <Button
+              variant="ghost"
+              size="icon"
+              asChild
+              aria-label="Save recording"
+              className="glass-button size-8 rounded-full"
+            >
               <a href={rec.url} download={`${rec.name.replace(/[^\w\s-]/g, "")}.webm`}>
                 <Download className="size-4" />
               </a>
@@ -51,6 +57,7 @@ export function RecordingsList({
               size="icon"
               aria-label="Delete recording"
               onClick={() => onRemove(rec.id)}
+              className="glass-button size-8 rounded-full hover:text-destructive"
             >
               <Trash2 className="size-4" />
             </Button>
