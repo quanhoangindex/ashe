@@ -39,7 +39,7 @@ function ToggleRow({
 }) {
   return (
     <div className="flex items-center gap-3 rounded-xl border border-border/70 bg-surface px-3 py-2.5 transition-colors hover:border-brand/40 hover:bg-accent/60">
-      <span className="flex size-8 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-colors group-hover:bg-accent">
+      <span className="flex size-8 items-center justify-center rounded-lg bg-accent text-accent-foreground">
         <Icon className="size-4" />
       </span>
       <div className="min-w-0 flex-1">
