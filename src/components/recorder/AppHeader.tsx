@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Radio, Settings } from "lucide-react";
+import { Disc, Radio, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const tabBase =
@@ -68,8 +68,12 @@ export function AppHeader() {
           <p className="text-xs text-muted-foreground">Desktop screen recorder</p>
         </div>
 
-        <nav className="glass-group ml-auto gap-1 rounded-full p-1" aria-label="Primary">
+        <nav
+          className="glass-group relative ml-auto gap-1 rounded-full p-0 before:pointer-events-none before:absolute before:inset-0 before:rounded-full before:shadow-[inset_0_1px_3px_rgba(0,0,0,0.06)]"
+          aria-label="Primary"
+        >
           <RecordTab exact label="Record">
+            <Disc className="size-3.5" />
             Record
           </RecordTab>
           <SettingsGear label="Settings" />
