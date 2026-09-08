@@ -172,6 +172,7 @@ export function StageView({
         {status === "idle" ? (
           <Button
             size="lg"
+            variant="ghost"
             onClick={onStart}
             className="glass-action glass-interactive gap-2 hover:text-brand-foreground"
           >
@@ -182,6 +183,7 @@ export function StageView({
           <>
             <Button
               size="lg"
+              variant="ghost"
               onClick={onStop}
               className="glass-danger glass-interactive gap-2 hover:text-destructive-foreground"
             >
