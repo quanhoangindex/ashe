@@ -69,7 +69,7 @@ export function AppHeader() {
         </div>
 
         <nav
-          className="glass-group relative ml-auto gap-1 rounded-full p-0 before:pointer-events-none before:absolute before:inset-0 before:rounded-full before:shadow-[inset_0_1px_3px_rgba(0,0,0,0.06)]"
+          className="glass-group relative ml-auto rounded-full p-0 before:pointer-events-none before:absolute before:inset-0 before:rounded-full before:shadow-[inset_0_1px_3px_rgba(0,0,0,0.06)]"
           aria-label="Primary"
         >
           <RecordTab exact label="Record">
