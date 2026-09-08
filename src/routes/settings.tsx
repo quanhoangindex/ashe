@@ -51,8 +51,7 @@ function SettingsPage() {
           <Keyboard className="mt-0.5 size-4 shrink-0" />
           <p>
             Zoom while recording with {modifierLabel()} + <kbd>=</kbd> / <kbd>−</kbd> /{" "}
-            <kbd>0</kbd>, or use the zoom buttons in the tray dock. On Windows the same shortcuts
-            work with Ctrl + Alt.
+            <kbd>0</kbd>, or use the zoom buttons in the tray dock.
           </p>
         </div>
       </main>
