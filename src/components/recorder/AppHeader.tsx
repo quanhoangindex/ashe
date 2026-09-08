@@ -5,21 +5,27 @@ import { formatDuration } from "@/lib/recorder-types";
 import { cn } from "@/lib/utils";
 
 const tabBase =
-  "relative flex h-6 min-w-6 shrink-0 items-center justify-center gap-1 rounded-full px-2 text-xs font-medium whitespace-nowrap";
+  "relative flex h-7 min-w-7 shrink-0 items-center justify-center gap-1 rounded-full px-2.5 text-xs font-medium whitespace-nowrap";
 
 function recordTabClass(isActive: boolean) {
   return isActive
     ? cn(tabBase, "glass-action text-brand-foreground shadow-soft")
-    : cn(tabBase, "glass-button text-muted-foreground hover:text-foreground");
+    : cn(
+        tabBase,
+        "glass-button bg-white/30 text-foreground hover:bg-card/70 hover:text-muted-foreground",
+      );
 }
 
 function settingsGearClass(isActive: boolean) {
   return isActive
     ? cn(
         tabBase,
-        "glass-button bg-accent/50 text-foreground ring-1 ring-border",
+        "glass-button bg-white/30 text-foreground ring-1 ring-border",
       )
-    : cn(tabBase, "glass-button text-muted-foreground hover:text-foreground");
+    : cn(
+        tabBase,
+        "glass-button bg-white/20 text-muted-foreground hover:bg-white/30 hover:text-foreground",
+      );
 }
 
 function RecordTab({
