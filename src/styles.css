@@ -286,13 +286,13 @@
  * Useful for tabs/controls that need to look glassy before interaction.
  */
 @utility glass-button-raised {
-  background-color: color-mix(in oklab, var(--color-card) 86%, white 14%);
-  border: 1px solid color-mix(in oklab, var(--color-card) 78%, var(--color-border));
+  background-color: color-mix(in oklab, var(--color-surface) 78%, white 22%);
+  border: 1px solid color-mix(in oklab, var(--color-border) 70%, transparent);
   box-shadow:
     var(--shadow-lift),
-    inset 0 1px 0 color-mix(in oklab, white 90%, transparent),
-    inset 0 2px 6px color-mix(in oklab, white 28%, transparent),
-    inset 0 -1px 0 color-mix(in oklab, var(--color-foreground) 4%, transparent);
+    inset 0 1px 0 color-mix(in oklab, white 92%, transparent),
+    inset 0 2px 6px color-mix(in oklab, white 30%, transparent),
+    inset 0 -1px 0 color-mix(in oklab, var(--color-foreground) 6%, transparent);
   backdrop-filter: blur(20px) saturate(180%);
   transition:
     background-color 180ms ease,
@@ -300,12 +300,12 @@
     transform 180ms ease;
 
   &:hover:not(:disabled) {
-    background-color: color-mix(in oklab, var(--color-card) 72%, transparent);
+    background-color: color-mix(in oklab, var(--color-surface) 68%, transparent);
     box-shadow:
       var(--shadow-soft),
       inset 0 1px 0 color-mix(in oklab, white 70%, transparent),
       inset 0 2px 6px color-mix(in oklab, white 18%, transparent),
-      inset 0 -1px 0 color-mix(in oklab, var(--color-foreground) 5%, transparent);
+      inset 0 -1px 0 color-mix(in oklab, var(--color-foreground) 6%, transparent);
   }
 
   &:active:not(:disabled) {
