@@ -69,10 +69,10 @@ export function ControlPanel({ settings, onChange, disabled }: Props) {
               disabled={disabled}
               onClick={() => onChange({ mode: key })}
               className={cn(
-                "flex flex-col items-start gap-2 rounded-xl border px-3 py-3 text-left transition-colors disabled:opacity-50",
+                "flex flex-col items-start gap-2 rounded-xl px-3 py-3 text-left disabled:opacity-50",
                 settings.mode === key
-                  ? "border-brand bg-accent text-accent-foreground"
-                  : "border-border bg-surface hover:border-brand/40 hover:bg-accent",
+                  ? "glass-outline-primary-active"
+                  : "glass-outline-primary text-foreground",
               )}
             >
               <Icon className="size-4" />
