@@ -235,7 +235,8 @@
     background-color: color-mix(in oklab, var(--color-card) 78%, white);
     box-shadow:
       var(--shadow-lift),
-      inset 0 1px 0 color-mix(in oklab, white 70%, transparent);
+      inset 0 1px 0 color-mix(in oklab, white 86%, transparent),
+      inset 0 2px 5px color-mix(in oklab, white 24%, transparent);
   }
 
   &:active:not(:disabled) {
@@ -251,12 +252,20 @@
   @supports not (backdrop-filter: blur(1px)) {
     &:hover:not(:disabled) {
       background-color: color-mix(in oklab, var(--color-card) 70%, white);
+      box-shadow:
+        var(--shadow-lift),
+        inset 0 1px 0 color-mix(in oklab, white 86%, transparent),
+        inset 0 2px 5px color-mix(in oklab, white 24%, transparent);
     }
   }
 
   @media (prefers-reduced-transparency: reduce) {
     &:hover:not(:disabled) {
       background-color: color-mix(in oklab, var(--color-card) 70%, white);
+      box-shadow:
+        var(--shadow-lift),
+        inset 0 1px 0 color-mix(in oklab, white 86%, transparent),
+        inset 0 2px 5px color-mix(in oklab, white 24%, transparent);
     }
   }
 }
@@ -272,7 +281,10 @@
 
   &:hover:not(:disabled) {
     background-color: color-mix(in oklab, var(--color-brand) 82%, white 12%);
-    box-shadow: var(--shadow-lift);
+    box-shadow:
+      var(--shadow-lift),
+      inset 0 1px 0 color-mix(in oklab, white 70%, transparent),
+      inset 0 2px 5px color-mix(in oklab, white 18%, transparent);
   }
 
   @supports not (backdrop-filter: blur(1px)) {
@@ -280,6 +292,10 @@
 
     &:hover:not(:disabled) {
       background-color: color-mix(in oklab, var(--color-brand) 88%, white);
+      box-shadow:
+        var(--shadow-lift),
+        inset 0 1px 0 color-mix(in oklab, white 70%, transparent),
+        inset 0 2px 5px color-mix(in oklab, white 18%, transparent);
     }
   }
 
@@ -289,6 +305,10 @@
 
     &:hover:not(:disabled) {
       background-color: color-mix(in oklab, var(--color-brand) 88%, white);
+      box-shadow:
+        var(--shadow-lift),
+        inset 0 1px 0 color-mix(in oklab, white 70%, transparent),
+        inset 0 2px 5px color-mix(in oklab, white 18%, transparent);
     }
   }
 }
@@ -301,6 +321,10 @@
 
   &:hover:not(:disabled) {
     background-color: color-mix(in oklab, var(--color-destructive) 82%, white 12%);
+    box-shadow:
+      var(--shadow-lift),
+      inset 0 1px 0 color-mix(in oklab, white 70%, transparent),
+      inset 0 2px 5px color-mix(in oklab, white 18%, transparent);
   }
 
   @supports not (backdrop-filter: blur(1px)) {
@@ -308,6 +332,10 @@
 
     &:hover:not(:disabled) {
       background-color: color-mix(in oklab, var(--color-destructive) 88%, white);
+      box-shadow:
+        var(--shadow-lift),
+        inset 0 1px 0 color-mix(in oklab, white 70%, transparent),
+        inset 0 2px 5px color-mix(in oklab, white 18%, transparent);
     }
   }
 
@@ -317,6 +345,10 @@
 
     &:hover:not(:disabled) {
       background-color: color-mix(in oklab, var(--color-destructive) 88%, white);
+      box-shadow:
+        var(--shadow-lift),
+        inset 0 1px 0 color-mix(in oklab, white 70%, transparent),
+        inset 0 2px 5px color-mix(in oklab, white 18%, transparent);
     }
   }
 }
