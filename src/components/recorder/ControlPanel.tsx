@@ -69,10 +69,10 @@ export function ControlPanel({ settings, onChange, disabled }: Props) {
               disabled={disabled}
               onClick={() => onChange({ mode: key })}
               className={cn(
-                "flex flex-col items-start gap-2 rounded-xl border px-3 py-3 text-left transition-colors disabled:opacity-50",
+                "flex flex-col items-start gap-2 rounded-xl px-3 py-3 text-left disabled:opacity-50",
                 settings.mode === key
-                  ? "border-brand bg-accent text-accent-foreground"
-                  : "border-border bg-surface hover:border-brand/40 hover:bg-accent",
+                  ? "glass-outline-primary-active"
+                  : "glass-outline-primary text-foreground",
               )}
             >
               <Icon className="size-4" />
@@ -125,11 +125,11 @@ export function ControlPanel({ settings, onChange, disabled }: Props) {
               disabled={disabled}
               onClick={() => onChange({ quality: preset.key })}
               className={cn(
-                "rounded-xl border px-3 py-2.5 text-left transition-colors disabled:opacity-50",
+                "rounded-xl px-3 py-2.5 text-left disabled:opacity-50",
                 preset.key === "native" && "col-span-2",
                 settings.quality === preset.key
-                  ? "border-brand bg-accent text-accent-foreground"
-                  : "border-border bg-surface hover:border-brand/40 hover:bg-accent",
+                  ? "glass-outline-primary-active"
+                  : "glass-outline-primary text-foreground",
               )}
             >
               <span className="block text-sm font-semibold">{preset.label}</span>
@@ -153,10 +153,10 @@ export function ControlPanel({ settings, onChange, disabled }: Props) {
               disabled={disabled}
               onClick={() => onChange({ fps })}
               className={cn(
-                "flex-1 rounded-xl border py-2 text-sm font-medium transition-colors disabled:opacity-50",
+                "flex-1 rounded-xl py-2 text-sm font-medium disabled:opacity-50",
                 settings.fps === fps
-                  ? "border-brand bg-accent text-accent-foreground"
-                  : "border-border bg-surface hover:border-brand/40 hover:bg-accent",
+                  ? "glass-outline-primary-active"
+                  : "glass-outline-primary text-foreground",
               )}
             >
               {fps} fps
