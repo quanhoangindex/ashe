@@ -5,15 +5,12 @@ import { formatDuration } from "@/lib/recorder-types";
 import { cn } from "@/lib/utils";
 
 const tabBase =
-  "relative flex items-center justify-center rounded-full size-9 transition-colors";
+  "relative flex h-9 min-w-9 shrink-0 items-center justify-center gap-1.5 rounded-full px-3 text-sm font-medium whitespace-nowrap transition-colors";
 
 function tabClass(isActive: boolean) {
   return isActive
     ? cn(tabBase, "glass-action text-brand-foreground shadow-soft")
-    : cn(
-        tabBase,
-        "glass-group glass-interactive text-muted-foreground hover:text-foreground",
-      );
+    : cn(tabBase, "glass-button text-muted-foreground hover:text-foreground");
 }
 
 function GlassTab({

@@ -53,7 +53,7 @@ function Index() {
           to="/settings"
           className="glass-panel glass-interactive flex items-center gap-3 px-4 py-3 text-left"
         >
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-accent text-accent-foreground">
+          <span className="glass-button flex size-9 shrink-0 items-center justify-center rounded-xl">
             <SlidersHorizontal className="size-4" />
           </span>
           <span className="min-w-0 flex-1">
