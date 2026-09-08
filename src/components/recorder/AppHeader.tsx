@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useMatch } from "@tanstack/react-router";
 import { Circle, Radio } from "lucide-react";
 import { useRecorderContext } from "@/lib/recorder-provider";
 import { formatDuration } from "@/lib/recorder-types";
@@ -14,6 +14,24 @@ function tabClass(isActive: boolean) {
         tabBase,
         "glass-interactive text-muted-foreground hover:text-foreground",
       );
+}
+
+function GlassTab({
+  to,
+  exact,
+  children,
+}: {
+  to: "/" | "/settings";
+  exact?: boolean;
+  children: React.ReactNode;
+}) {
+  const match = useMatch({ from: to, shouldThrow: false });
+  const isActive = exact ? !!match?.isExact : !!match;
+  return (
+    <Link to={to} className={tabClass(isActive)}>
+      {children}
+    </Link>
+  );
 }
 
 export function AppHeader() {
@@ -32,19 +50,10 @@ export function AppHeader() {
         </div>
 
         <nav className="glass-group ml-auto gap-1 rounded-full p-1" aria-label="Primary">
-          <Link
-            to="/"
-            activeOptions={{ exact: true }}
-            className={({ isActive }: { isActive: boolean }) => tabClass(isActive)}
-          >
+          <GlassTab to="/" exact>
             Record
-          </Link>
-          <Link
-            to="/settings"
-            className={({ isActive }: { isActive: boolean }) => tabClass(isActive)}
-          >
-            Settings
-          </Link>
+          </GlassTab>
+          <GlassTab to="/settings">Settings</GlassTab>
         </nav>
 
         <div className="glass-group gap-2 rounded-full px-3 py-1.5 text-xs font-medium">
