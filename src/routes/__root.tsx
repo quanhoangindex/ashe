@@ -4,9 +4,11 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
@@ -126,6 +128,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isOverlay = pathname === "/overlay";
+
+  if (isOverlay) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <Outlet />
+      </QueryClientProvider>
+    );
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -138,4 +150,5 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+
 
