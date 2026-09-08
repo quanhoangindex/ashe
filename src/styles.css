@@ -232,8 +232,10 @@
     transform 180ms ease;
 
   &:hover:not(:disabled) {
-    background-color: color-mix(in oklab, var(--color-card) 88%, transparent);
-    box-shadow: var(--shadow-lift);
+    background-color: color-mix(in oklab, var(--color-card) 78%, white);
+    box-shadow:
+      var(--shadow-lift),
+      inset 0 1px 0 color-mix(in oklab, white 70%, transparent);
   }
 
   &:active:not(:disabled) {
@@ -243,6 +245,18 @@
   @media (prefers-reduced-motion: reduce) {
     &:active:not(:disabled) {
       transform: none;
+    }
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklab, var(--color-card) 70%, white);
+    }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklab, var(--color-card) 70%, white);
     }
   }
 }
@@ -257,17 +271,25 @@
   backdrop-filter: blur(20px) saturate(180%);
 
   &:hover:not(:disabled) {
-    background-color: color-mix(in oklab, var(--color-brand) 90%, transparent);
+    background-color: color-mix(in oklab, var(--color-brand) 82%, white 12%);
     box-shadow: var(--shadow-lift);
   }
 
   @supports not (backdrop-filter: blur(1px)) {
     background-color: var(--color-brand);
+
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklab, var(--color-brand) 88%, white);
+    }
   }
 
   @media (prefers-reduced-transparency: reduce) {
     background-color: var(--color-brand);
     backdrop-filter: none;
+
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklab, var(--color-brand) 88%, white);
+    }
   }
 }
 
@@ -278,16 +300,24 @@
   backdrop-filter: blur(20px) saturate(180%);
 
   &:hover:not(:disabled) {
-    background-color: color-mix(in oklab, var(--color-destructive) 90%, transparent);
+    background-color: color-mix(in oklab, var(--color-destructive) 82%, white 12%);
   }
 
   @supports not (backdrop-filter: blur(1px)) {
     background-color: var(--color-destructive);
+
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklab, var(--color-destructive) 88%, white);
+    }
   }
 
   @media (prefers-reduced-transparency: reduce) {
     background-color: var(--color-destructive);
     backdrop-filter: none;
+
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklab, var(--color-destructive) 88%, white);
+    }
   }
 }
 

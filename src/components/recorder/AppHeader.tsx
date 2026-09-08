@@ -5,7 +5,7 @@ import { formatDuration } from "@/lib/recorder-types";
 import { cn } from "@/lib/utils";
 
 const navLink =
-  "glass-interactive rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground";
+  "glass-interactive rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground";
 
 export function AppHeader() {
   const { status, elapsed } = useRecorderContext();

@@ -114,7 +114,7 @@ export function TrayDock() {
         <button
           type="button"
           onClick={() => setCollapsed(true)}
-          className="ml-1 text-muted-foreground hover:text-foreground"
+          className="ml-1 rounded-full p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
           aria-label="Collapse tray controls"
         >
           <Minus className="size-4" />
