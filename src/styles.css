@@ -277,7 +277,62 @@
 
     &:hover:not(:disabled) {
       background-color: color-mix(in oklab, var(--color-card) 78%, white);
+}
+
+/*
+ * glass-button-raised: the "hover" liquid look as a default state.
+ * Useful for tabs/controls that need to look glassy before interaction.
+ */
+@utility glass-button-raised {
+  background-color: color-mix(in oklab, var(--color-card) 86%, white 14%);
+  border: 1px solid color-mix(in oklab, var(--color-card) 78%, var(--color-border));
+  box-shadow:
+    var(--shadow-lift),
+    inset 0 1px 0 color-mix(in oklab, white 90%, transparent),
+    inset 0 2px 6px color-mix(in oklab, white 28%, transparent),
+    inset 0 -1px 0 color-mix(in oklab, var(--color-foreground) 4%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+
+  &:hover:not(:disabled) {
+    background-color: color-mix(in oklab, var(--color-card) 72%, transparent);
+    box-shadow:
+      var(--shadow-soft),
+      inset 0 1px 0 color-mix(in oklab, white 70%, transparent),
+      inset 0 2px 6px color-mix(in oklab, white 18%, transparent),
+      inset 0 -1px 0 color-mix(in oklab, var(--color-foreground) 5%, transparent);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:active:not(:disabled) {
+      transform: none;
     }
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    background-color: color-mix(in oklab, var(--color-card) 78%, white);
+
+    &:hover:not(:disabled) {
+      background-color: var(--color-card);
+    }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: color-mix(in oklab, var(--color-card) 78%, white);
+    backdrop-filter: none;
+
+    &:hover:not(:disabled) {
+      background-color: var(--color-card);
+    }
+  }
+}
   }
 }
 
