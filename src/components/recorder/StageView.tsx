@@ -82,7 +82,7 @@ export function StageView({
   }, []);
 
   return (
-    <section className="panel overflow-hidden">
+    <section className="glass-panel overflow-hidden">
       <div className="relative aspect-video w-full touch-none bg-primary">
         <video
           ref={videoRef}
@@ -168,19 +168,32 @@ export function StageView({
 
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 border-t border-border p-4">
+      <div className="flex flex-wrap items-center gap-3 border-t border-border/60 p-4">
         {status === "idle" ? (
-          <Button size="lg" onClick={onStart} className="gap-2">
+          <Button
+            size="lg"
+            onClick={onStart}
+            className="glass-action glass-interactive gap-2 hover:text-brand-foreground"
+          >
             <Circle className="size-3.5 fill-current" />
             Start recording
           </Button>
         ) : (
           <>
-            <Button size="lg" variant="destructive" onClick={onStop} className="gap-2">
+            <Button
+              size="lg"
+              onClick={onStop}
+              className="glass-danger glass-interactive gap-2 hover:text-destructive-foreground"
+            >
               <Square className="size-3.5 fill-current" />
               Stop
             </Button>
-            <Button size="lg" variant="secondary" onClick={onTogglePause} className="gap-2">
+            <Button
+              size="lg"
+              variant="ghost"
+              onClick={onTogglePause}
+              className="glass-group glass-interactive gap-2 rounded-md px-6"
+            >
               {status === "recording" ? (
                 <>
                   <Pause className="size-4" /> Pause
@@ -190,6 +203,10 @@ export function StageView({
                   <Play className="size-4" /> Resume
                 </>
               )}
+            </Button>
+          </>
+        )}
+
             </Button>
           </>
         )}

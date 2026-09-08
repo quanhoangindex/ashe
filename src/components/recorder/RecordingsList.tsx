@@ -11,7 +11,7 @@ export function RecordingsList({
 }) {
   if (recordings.length === 0) {
     return (
-      <div className="panel flex flex-col items-center justify-center gap-2 p-8 text-center">
+      <div className="glass-panel flex flex-col items-center justify-center gap-2 p-8 text-center">
         <span className="flex size-11 items-center justify-center rounded-full bg-accent text-accent-foreground">
           <Film className="size-5" />
         </span>
@@ -24,7 +24,7 @@ export function RecordingsList({
   }
 
   return (
-    <div className="panel divide-y divide-border">
+    <div className="glass-panel divide-y divide-border/60">
       {recordings.map((rec) => (
         <div key={rec.id} className="flex items-center gap-4 p-4">
           <video
