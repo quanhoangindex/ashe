@@ -40,7 +40,13 @@ export function useRecorderContext() {
  * user moves between the stage and the settings page. Settings are remembered
  * on this computer.
  */
-export function RecorderProvider({ children }: { children: ReactNode }) {
+export function RecorderProvider({
+  children,
+  desktopIntegration = true,
+}: {
+  children: ReactNode;
+  desktopIntegration?: boolean;
+}) {
   const [settings, setSettings] = useState<RecorderSettings>(DEFAULT_SETTINGS);
   const recorder = useRecorder(settings);
 
@@ -71,7 +77,7 @@ export function RecorderProvider({ children }: { children: ReactNode }) {
     togglePause: recorder.togglePause,
     nudgeZoom: recorder.nudgeZoom,
     resetZoom: recorder.resetZoom,
-  });
+  }, desktopIntegration);
 
   useDesktopZoom(recorder.setZoom);
 
@@ -81,7 +87,7 @@ export function RecorderProvider({ children }: { children: ReactNode }) {
     elapsed: recorder.elapsed,
     zoom: recorder.zoom,
     stream: recorder.stream,
-  });
+  }, desktopIntegration);
 
 
   // Same hotkeys inside the app window, so zoom works without the desktop build too.

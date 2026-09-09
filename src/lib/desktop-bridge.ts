@@ -98,13 +98,13 @@ export function useOverlayBroadcast(state: {
   elapsed: number;
   zoom: number;
   stream: MediaStream | null;
-}) {
+}, enabled = true) {
   const stateRef = useRef(state);
   stateRef.current = state;
 
   useEffect(() => {
     const api = bridge();
-    if (!api?.sendOverlayUpdate) return;
+    if (!enabled || !api?.sendOverlayUpdate) return;
     if (state.status === "idle" || !state.stream) return;
 
     const video = document.createElement("video");
@@ -137,7 +137,7 @@ export function useOverlayBroadcast(state: {
       window.clearInterval(id);
       video.srcObject = null;
     };
-  }, [state.status, state.stream]);
+  }, [enabled, state.status, state.stream]);
 }
 
 /** Keeps the native system-tray menu in sync and reacts to its commands. */
@@ -150,17 +150,19 @@ export function useDesktopTray(
     nudgeZoom: (factor: number) => void;
     resetZoom: () => void;
   },
+  enabled = true,
 ) {
   useEffect(() => {
+    if (!enabled) return;
     bridge()?.setRecordingState(status);
-  }, [status]);
+  }, [enabled, status]);
 
   const actionsRef = useRef(actions);
   actionsRef.current = actions;
 
   useEffect(() => {
     const api = bridge();
-    if (!api) return;
+    if (!enabled || !api) return;
     return api.onTrayCommand((cmd) => {
       const a = actionsRef.current;
       if (cmd === "start") a.start();
@@ -170,5 +172,5 @@ export function useDesktopTray(
       if (cmd === "zoom-out") a.nudgeZoom(1 / 1.4);
       if (cmd === "zoom-reset") a.resetZoom();
     });
-  }, []);
+  }, [enabled]);
 }

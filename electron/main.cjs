@@ -11,11 +11,14 @@ const {
   screen,
 } = require("electron");
 
-const APP_URL = process.env.APP_URL || "http://localhost:8080";
+const APP_URL = process.env.APP_URL ||
+  (app.isPackaged ? "https://screen-buddy-08.lovable.app" : "http://localhost:8080");
 
 let mainWindow = null;
-let overlayWindow = null;
+const overlayWindows = new Map();
 let overlayPreview = true;
+let overlaysHiddenByUser = false;
+let latestOverlayUpdate = null;
 let tray = null;
 let recordingState = "idle";
 
@@ -23,11 +26,24 @@ const OVERLAY_W = 360;
 const OVERLAY_H_SMALL = 84;
 const OVERLAY_H_FULL = 276;
 
-/** Small always-on-top window that stays visible over every other app. */
-function createOverlay() {
-  if (overlayWindow && !overlayWindow.isDestroyed()) return overlayWindow;
-  const area = screen.getPrimaryDisplay().workArea;
-  overlayWindow = new BrowserWindow({
+function overlayBounds(display) {
+  const area = display.workArea;
+  const height = overlayPreview ? OVERLAY_H_FULL : OVERLAY_H_SMALL;
+  return {
+    width: OVERLAY_W,
+    height,
+    x: area.x + area.width - OVERLAY_W - 24,
+    y: area.y + area.height - height - 24,
+  };
+}
+
+/** One always-on-top recording panel for each connected display. */
+function createOverlay(display) {
+  const displayId = String(display.id);
+  const existing = overlayWindows.get(displayId);
+  if (existing && !existing.isDestroyed()) return existing;
+  const overlayWindow = new BrowserWindow({
+    ...overlayBounds(display),
     width: OVERLAY_W,
     height: overlayPreview ? OVERLAY_H_FULL : OVERLAY_H_SMALL,
     x: area.x + area.width - OVERLAY_W - 24,
@@ -55,20 +71,49 @@ function createOverlay() {
   } catch {
     /* not supported on this OS */
   }
-  overlayWindow.loadURL(`${APP_URL}/overlay`);
-  overlayWindow.on("closed", () => {
-    overlayWindow = null;
+  overlayWindow.loadURL(`${APP_URL.replace(/\/$/, "")}/overlay?display=${encodeURIComponent(displayId)}`);
+  overlayWindow.webContents.on("did-finish-load", () => {
+    if (latestOverlayUpdate && !overlayWindow.isDestroyed()) {
+      overlayWindow.webContents.send("overlay:data", latestOverlayUpdate);
+    }
   });
+  overlayWindow.on("closed", () => {
+    overlayWindows.delete(displayId);
+  });
+  overlayWindows.set(displayId, overlayWindow);
   return overlayWindow;
 }
 
-function showOverlay() {
-  const win = createOverlay();
-  if (!win.isVisible()) win.showInactive();
+function syncOverlays() {
+  const displays = screen.getAllDisplays();
+  const connectedIds = new Set(displays.map((display) => String(display.id)));
+
+  for (const [displayId, win] of overlayWindows) {
+    if (!connectedIds.has(displayId)) {
+      if (!win.isDestroyed()) win.destroy();
+      overlayWindows.delete(displayId);
+    }
+  }
+
+  for (const display of displays) {
+    const win = createOverlay(display);
+    if (!win.isDestroyed()) win.setBounds(overlayBounds(display));
+  }
 }
 
-function hideOverlay() {
-  if (overlayWindow && !overlayWindow.isDestroyed()) overlayWindow.hide();
+function showOverlays() {
+  overlaysHiddenByUser = false;
+  syncOverlays();
+  for (const win of overlayWindows.values()) {
+    if (!win.isDestroyed() && !win.isVisible()) win.showInactive();
+  }
+}
+
+function hideOverlays(hiddenByUser = false) {
+  overlaysHiddenByUser = hiddenByUser;
+  for (const win of overlayWindows.values()) {
+    if (!win.isDestroyed()) win.hide();
+  }
 }
 
 
@@ -176,6 +221,11 @@ function buildTrayMenu() {
       click: () => send("tray:toggle-pause"),
     },
     { label: "Stop recording", enabled: live, click: () => send("tray:stop") },
+    {
+      label: "Show floating controls",
+      enabled: live,
+      click: () => showOverlays(),
+    },
     { type: "separator" },
     {
       label: "Open Ashe",
@@ -229,6 +279,7 @@ ipcMain.handle("capture:sources", async (_event, types) => {
 });
 
 ipcMain.on("recorder:state", (_event, state) => {
+  const previousState = recordingState;
   recordingState = state;
   if (state === "idle") {
     zoomLevel = 1;
@@ -236,9 +287,11 @@ ipcMain.on("recorder:state", (_event, state) => {
       clearInterval(followTimer);
       followTimer = null;
     }
-    hideOverlay();
-  } else {
-    showOverlay();
+    hideOverlays(false);
+  } else if (previousState === "idle") {
+    showOverlays();
+  } else if (!overlaysHiddenByUser) {
+    showOverlays();
   }
   if (tray) {
     tray.setContextMenu(buildTrayMenu());
@@ -248,8 +301,11 @@ ipcMain.on("recorder:state", (_event, state) => {
 
 // Live status + mini preview frames travel main window -> overlay window.
 ipcMain.on("overlay:update", (_event, payload) => {
-  if (overlayWindow && !overlayWindow.isDestroyed() && overlayWindow.isVisible()) {
-    overlayWindow.webContents.send("overlay:data", payload);
+  latestOverlayUpdate = payload;
+  for (const win of overlayWindows.values()) {
+    if (!win.isDestroyed() && win.isVisible() && !win.webContents.isLoading()) {
+      win.webContents.send("overlay:data", payload);
+    }
   }
 });
 
@@ -282,26 +338,25 @@ ipcMain.on("overlay:command", (_event, command) => {
 
 ipcMain.on("overlay:preview", (_event, visible) => {
   overlayPreview = Boolean(visible);
-  if (overlayWindow && !overlayWindow.isDestroyed()) {
-    const height = overlayPreview ? OVERLAY_H_FULL : OVERLAY_H_SMALL;
-    const bounds = overlayWindow.getBounds();
-    overlayWindow.setBounds({
-      x: bounds.x,
-      y: bounds.y + (bounds.height - height),
-      width: OVERLAY_W,
-      height,
-    });
-  }
+  syncOverlays();
 });
 
-ipcMain.on("overlay:hide", () => hideOverlay());
-ipcMain.on("overlay:show", () => showOverlay());
+ipcMain.on("overlay:hide", () => hideOverlays(true));
+ipcMain.on("overlay:show", () => showOverlays());
 
 
 app.whenReady().then(() => {
   createWindow();
   createTray();
   registerShortcuts();
+
+  screen.on("display-added", () => {
+    if (recordingState !== "idle" && !overlaysHiddenByUser) showOverlays();
+  });
+  screen.on("display-removed", () => syncOverlays());
+  screen.on("display-metrics-changed", () => {
+    if (recordingState !== "idle") syncOverlays();
+  });
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

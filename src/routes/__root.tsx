@@ -131,7 +131,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <RecorderProvider>
+      <RecorderProvider desktopIntegration={!isOverlay}>
         {!isOverlay && <AppHeader />}
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
