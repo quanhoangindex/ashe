@@ -1,6 +1,6 @@
-# Screen Capture Pal
+# Ashe
 
-build a screen recording desktop app. it has basic feature like recording full screen, selected windows, control panel that help user to pick and enable cursor or sound form system, quality options, system tray. Make the design match with Lovable's design system
+A desktop screen recording app. Record full screen or a selected window, control cursor and system sound, choose quality and frame rate, and manage everything from the system tray or floating controls.
 
 This project was built with [Lovable](https://lovable.dev).
 

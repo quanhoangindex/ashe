@@ -178,7 +178,7 @@ function buildTrayMenu() {
     { label: "Stop recording", enabled: live, click: () => send("tray:stop") },
     { type: "separator" },
     {
-      label: "Open Reel",
+      label: "Open Ashe",
       click: () => {
         if (!mainWindow) createWindow();
         mainWindow.show();
@@ -201,7 +201,7 @@ function createTray() {
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAWElEQVR4AWMYWuA/AwPDfwYGhv9EGvCfgYHhPwMDw38GBob/DAwM/xkYGP4zMDD8Z2Bg+M/AwPCfgYHhPwMDw38GBob/DAwM/xkYGP4zMDD8H1oAAJ0kD/2h1p1DAAAAAElFTkSuQmCC",
   );
   tray = new Tray(icon);
-  tray.setToolTip("Reel — screen recorder");
+  tray.setToolTip("Ashe — screen recorder");
   tray.setContextMenu(buildTrayMenu());
   // On Windows a left click should reopen the window; on Mac it opens the menu.
   tray.on("click", () => {
@@ -242,7 +242,7 @@ ipcMain.on("recorder:state", (_event, state) => {
   }
   if (tray) {
     tray.setContextMenu(buildTrayMenu());
-    tray.setToolTip(state === "idle" ? "Reel — idle" : `Reel — ${state}`);
+    tray.setToolTip(state === "idle" ? "Ashe — idle" : `Ashe — ${state}`);
   }
 });
 

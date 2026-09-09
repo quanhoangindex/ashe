@@ -7,17 +7,17 @@ import { modifierLabel } from "@/lib/platform";
 export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
-      { title: "Recording Settings — Reel Screen Recorder" },
+      { title: "Recording Settings — Ashe Screen Recorder" },
       {
         name: "description",
         content:
           "Choose full screen or a single window, show the cursor, capture system sound and microphone, and set quality and frame rate for your recordings.",
       },
-      { property: "og:title", content: "Recording Settings — Reel Screen Recorder" },
+      { property: "og:title", content: "Recording Settings — Ashe Screen Recorder" },
       {
         property: "og:description",
         content:
-          "Capture source, cursor, sound, quality preset and frame rate — everything Reel uses for your next take.",
+          "Capture source, cursor, sound, quality preset and frame rate — everything Ashe uses for your next take.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
