@@ -24,45 +24,51 @@ export function RecordingsList({
   }
 
   return (
-    <div className="glass-panel divide-y divide-border/60">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       {recordings.map((rec) => (
-        <div key={rec.id} className="flex items-center gap-4 p-4 transition-colors hover:bg-accent/40">
+        <article
+          key={rec.id}
+          className="glass-panel group overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-lift"
+        >
           <video
             src={rec.url}
-            className="h-16 w-28 shrink-0 rounded-lg border border-border bg-secondary object-cover"
+            className="aspect-video w-full border-b border-border/60 bg-secondary object-cover"
             muted
             playsInline
             preload="metadata"
+            controls
           />
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">{rec.name}</p>
-            <p className="text-xs text-muted-foreground">
-              {formatDuration(rec.duration)} · {formatSize(rec.size)} · {rec.quality}
-            </p>
+          <div className="flex items-center gap-3 p-3.5">
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium">{rec.name}</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                {formatDuration(rec.duration)} · {formatSize(rec.size)} · {rec.quality}
+              </p>
+            </div>
+            <div className="flex shrink-0 items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                asChild
+                aria-label="Save recording"
+                className="glass-button size-8 rounded-full"
+              >
+                <a href={rec.url} download={`${rec.name.replace(/[^\w\s-]/g, "")}.webm`}>
+                  <Download className="size-4" />
+                </a>
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Delete recording"
+                onClick={() => onRemove(rec.id)}
+                className="glass-button size-8 rounded-full hover:text-destructive"
+              >
+                <Trash2 className="size-4" />
+              </Button>
+            </div>
           </div>
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              asChild
-              aria-label="Save recording"
-              className="glass-button size-8 rounded-full"
-            >
-              <a href={rec.url} download={`${rec.name.replace(/[^\w\s-]/g, "")}.webm`}>
-                <Download className="size-4" />
-              </a>
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Delete recording"
-              onClick={() => onRemove(rec.id)}
-              className="glass-button size-8 rounded-full hover:text-destructive"
-            >
-              <Trash2 className="size-4" />
-            </Button>
-          </div>
-        </div>
+        </article>
       ))}
     </div>
   );

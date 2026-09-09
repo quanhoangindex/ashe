@@ -27,6 +27,10 @@ export function TrayDock() {
   const isDesktop = useIsDesktopApp();
   const live = rec.status !== "idle";
 
+  // Only show the floating dock once the user starts a recording.
+  if (!live) return null;
+
+
 
   if (collapsed) {
     return (
