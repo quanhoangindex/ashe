@@ -64,9 +64,8 @@ export function AppHeader() {
         <span className="flex size-9 items-center justify-center rounded-xl bg-brand/10">
           <img src={asheLogo.url} alt="Ashe" className="size-8 rounded-xl" />
         </span>
-        <div>
+        <div className="flex items-center">
           <h1 className="text-lg font-semibold leading-none">Ashe</h1>
-          <p className="text-xs text-muted-foreground">Desktop screen recorder</p>
         </div>
 
         <nav
