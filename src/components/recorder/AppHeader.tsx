@@ -1,5 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Disc, Radio, Settings } from "lucide-react";
+import { Disc, Settings } from "lucide-react";
+import asheLogo from "@/assets/ashe-logo.png.asset.json";
 import { cn } from "@/lib/utils";
 
 const tabBase =
@@ -60,11 +61,11 @@ export function AppHeader() {
   return (
     <header className="sticky top-0 z-20 border-b border-border/50 bg-background/60 backdrop-blur-2xl backdrop-saturate-150">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3 sm:px-6 sm:py-4">
-        <span className="flex size-9 items-center justify-center rounded-xl bg-brand text-brand-foreground">
-          <Radio className="size-4" />
+        <span className="flex size-9 items-center justify-center rounded-xl bg-brand/10">
+          <img src={asheLogo.url} alt="Ashe" className="size-8 rounded-xl" />
         </span>
         <div>
-          <h1 className="text-lg font-semibold leading-none">Reel</h1>
+          <h1 className="text-lg font-semibold leading-none">Ashe</h1>
           <p className="text-xs text-muted-foreground">Desktop screen recorder</p>
         </div>
 
