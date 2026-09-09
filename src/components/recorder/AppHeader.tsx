@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Disc, Settings } from "lucide-react";
+import { Disc, Film, Settings } from "lucide-react";
 import asheLogo from "@/assets/ashe-logo.png.asset.json";
 import { cn } from "@/lib/utils";
 
