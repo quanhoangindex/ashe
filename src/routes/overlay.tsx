@@ -8,13 +8,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/overlay")({
   head: () => ({
     meta: [
-      { title: "Reel — Floating Recording Controls" },
+      { title: "Ashe — Floating Recording Controls" },
       {
         name: "description",
         content:
           "A small always-on-top panel with a live preview of what you are recording plus record, pause, stop and zoom controls.",
       },
-      { property: "og:title", content: "Reel — Floating Recording Controls" },
+      { property: "og:title", content: "Ashe — Floating Recording Controls" },
       {
         property: "og:description",
         content: "Keep an eye on your recording and control it from any app.",

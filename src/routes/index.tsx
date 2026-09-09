@@ -7,13 +7,13 @@ import { useRecorderContext } from "@/lib/recorder-provider";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Reel — Screen Recorder for Desktop" },
+      { title: "Ashe — Screen Recorder for Desktop" },
       {
         name: "description",
         content:
           "Record your full screen or a single window with cursor, system sound and microphone, zoom while recording, and control everything from the tray dock.",
       },
-      { property: "og:title", content: "Reel — Screen Recorder for Desktop" },
+      { property: "og:title", content: "Ashe — Screen Recorder for Desktop" },
       {
         property: "og:description",
         content:
