@@ -62,12 +62,14 @@ function RecordingsLink({
 }: {
   label: string;
 }) {
+  const { pathname } = useLocation();
+  const isActive = pathname.startsWith("/recordings");
   return (
     <Link
       to="/recordings"
       aria-label={label}
       title={label}
-      className="relative flex h-8 w-8 items-center justify-center rounded-full glass-button-raised text-foreground"
+      className={tabClass(isActive)}
     >
       <Film className="size-4" />
     </Link>
