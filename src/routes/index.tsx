@@ -1,6 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Film } from "lucide-react";
-import { RecordingsList } from "@/components/recorder/RecordingsList";
 import { StageView } from "@/components/recorder/StageView";
 import { useRecorderContext } from "@/lib/recorder-provider";
 
