@@ -31,7 +31,7 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="mx-auto max-w-5xl space-y-6 px-4 py-6 pb-32 sm:px-6 sm:py-8">
+      <main className="mx-auto max-w-2xl space-y-6 px-4 py-6 pb-32 sm:px-6 sm:py-8">
         <StageView
           zoom={recorder.zoom}
           onZoom={recorder.setZoom}

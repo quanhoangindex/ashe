@@ -60,7 +60,7 @@ function SettingsGear({
 export function AppHeader() {
   return (
     <header className="sticky top-0 z-20 border-b border-border/50 bg-background/60 backdrop-blur-2xl backdrop-saturate-150">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3 sm:px-6 sm:py-4">
+      <div className="mx-auto flex max-w-2xl flex-wrap items-center gap-3 px-4 py-3 sm:px-6 sm:py-4">
         <span className="flex size-9 items-center justify-center rounded-xl bg-brand/10">
           <img src={asheLogo.url} alt="Ashe" className="size-8 rounded-xl" />
         </span>
