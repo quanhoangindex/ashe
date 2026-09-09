@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Disc, Settings } from "lucide-react";
+import { Disc, Film, Settings } from "lucide-react";
 import asheLogo from "@/assets/ashe-logo.png.asset.json";
 import { cn } from "@/lib/utils";
 
@@ -57,6 +57,25 @@ function SettingsGear({
   );
 }
 
+function RecordingsLink({
+  label,
+}: {
+  label: string;
+}) {
+  const { pathname } = useLocation();
+  const isActive = pathname.startsWith("/recordings");
+  return (
+    <Link
+      to="/recordings"
+      aria-label={label}
+      title={label}
+      className={tabClass(isActive)}
+    >
+      <Film className="size-4" />
+    </Link>
+  );
+}
+
 export function AppHeader() {
   return (
     <header className="sticky top-0 z-20 border-b border-border/50 bg-background/60 backdrop-blur-2xl backdrop-saturate-150">
@@ -68,16 +87,19 @@ export function AppHeader() {
           <h1 className="text-lg font-semibold leading-none">Ashe</h1>
         </div>
 
-        <nav
-          className="glass-group relative ml-auto rounded-full p-0 before:pointer-events-none before:absolute before:inset-0 before:rounded-full before:shadow-[inset_0_1px_3px_rgba(0,0,0,0.06)]"
-          aria-label="Primary"
-        >
-          <RecordTab exact label="Record">
-            <Disc className="size-3.5" />
-            Record
-          </RecordTab>
-          <SettingsGear label="Settings" />
-        </nav>
+        <div className="ml-auto flex items-center gap-2">
+          <nav
+            className="glass-group relative rounded-full p-0 before:pointer-events-none before:absolute before:inset-0 before:rounded-full before:shadow-[inset_0_1px_3px_rgba(0,0,0,0.06)]"
+            aria-label="Primary"
+          >
+            <RecordTab exact label="Record">
+              <Disc className="size-3.5" />
+              Record
+            </RecordTab>
+            <SettingsGear label="Settings" />
+          </nav>
+          <RecordingsLink label="Your takes" />
+        </div>
 
       </div>
     </header>

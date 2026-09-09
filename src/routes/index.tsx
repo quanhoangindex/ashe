@@ -1,6 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Film } from "lucide-react";
-import { RecordingsList } from "@/components/recorder/RecordingsList";
 import { StageView } from "@/components/recorder/StageView";
 import { useRecorderContext } from "@/lib/recorder-provider";
 
@@ -52,13 +50,6 @@ function Index() {
             {recorder.error}
           </p>
         )}
-
-        <section>
-          <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            <Film className="size-4" /> Your takes
-          </h2>
-          <RecordingsList recordings={recorder.recordings} onRemove={recorder.remove} />
-        </section>
       </main>
     </div>
   );
