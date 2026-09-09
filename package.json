@@ -6,7 +6,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
+    "desktop": "electron .",
     "build": "vite build",
+    "package:windows": "bun run build && electron-packager . Ashe --platform=win32 --arch=x64 --out=electron-release --overwrite --ignore='node_modules' --ignore='^/src' --ignore='^/public' --ignore='^/electron-release'",
+    "package:mac": "bun run build && electron-packager . Ashe --platform=darwin --arch=x64 --out=electron-release --overwrite --ignore='node_modules' --ignore='^/src' --ignore='^/public' --ignore='^/electron-release'",
+    "package:linux": "bun run build && electron-packager . Ashe --platform=linux --arch=x64 --out=electron-release --overwrite --ignore='node_modules' --ignore='^/src' --ignore='^/public' --ignore='^/electron-release'",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
