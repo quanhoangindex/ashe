@@ -44,10 +44,6 @@ function createOverlay(display) {
   if (existing && !existing.isDestroyed()) return existing;
   const overlayWindow = new BrowserWindow({
     ...overlayBounds(display),
-    width: OVERLAY_W,
-    height: overlayPreview ? OVERLAY_H_FULL : OVERLAY_H_SMALL,
-    x: area.x + area.width - OVERLAY_W - 24,
-    y: area.y + area.height - (overlayPreview ? OVERLAY_H_FULL : OVERLAY_H_SMALL) - 24,
     frame: false,
     transparent: true,
     resizable: false,
