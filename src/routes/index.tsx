@@ -50,13 +50,6 @@ function Index() {
             {recorder.error}
           </p>
         )}
-
-        <section>
-          <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            <Film className="size-4" /> Your takes
-          </h2>
-          <RecordingsList recordings={recorder.recordings} onRemove={recorder.remove} />
-        </section>
       </main>
     </div>
   );
